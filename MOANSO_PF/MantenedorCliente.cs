@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CapaEntidad;
 using CapaLogica;
@@ -14,39 +7,49 @@ namespace MOANSO_PF
 {
     public partial class MantenedorCliente : Form
     {
+        private int _clienteID = 0;
+
         public MantenedorCliente()
         {
             InitializeComponent();
             gbDatosCliente.Enabled = false;
             listarCliente();
         }
+
         public void listarCliente()
         {
             dgvCliente.DataSource = logCliente.Instancia.ListarCliente();
         }
+
         public void limpiarVariables()
         {
-            txtIDCliente.Text = "";
             txtNombreCliente.Text = "";
+            txtDNICliente.Text = "";
             txtNumeroCliente.Text = "";
             txtCorreoCliente.Text = "";
+            dtpFechaCliente.Value = DateTime.Now;
+            chbEstadoCliente.Checked = true;
+            _clienteID = 0;
         }
+
         private void btnAgregarCliente_Click(object sender, EventArgs e)
         {
-            try { 
-                entCliente c = new entCliente();
-                c.ClienteID = int.Parse(txtIDCliente.Text.Trim());
-                c.Nombre_Cliente = txtNombreCliente.Text.Trim();
-                c.DNI = int.Parse(txtDNICliente.Text.Trim());
-                c.Numero = int.Parse(txtNumeroCliente.Text.Trim());
-                c.Correo = txtCorreoCliente.Text.Trim();
-                c.Fecha = dtpFechaCliente.Value;
-                c.EstadoCliente = chbEstadoCliente.Checked;
-                logCliente.Instancia.agregarCliente(c);
-            }
-            catch (Exception exc) {
-                MessageBox.Show("Error..."+exc);
-            }
+            entCliente c = new entCliente
+            {
+                Nombre_Cliente = txtNombreCliente.Text.Trim(),
+                DNI = txtDNICliente.Text.Trim(),
+                Numero = txtNumeroCliente.Text.Trim(),
+                Correo = txtCorreoCliente.Text.Trim(),
+                Fecha = dtpFechaCliente.Value,
+                EstadoCliente = chbEstadoCliente.Checked
+            };
+
+            var result = logCliente.Instancia.agregarCliente(c);
+            if (result.Success)
+                MessageBox.Show("Cliente registrado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             gbDatosCliente.Enabled = false;
             listarCliente();
@@ -54,20 +57,29 @@ namespace MOANSO_PF
 
         private void btnModificarCliente_Click(object sender, EventArgs e)
         {
-            try {
-                entCliente c = new entCliente();
-                c.ClienteID = int.Parse(txtIDCliente.Text.Trim());
-                c.Nombre_Cliente = txtNombreCliente.Text.Trim();
-                c.DNI = int.Parse(txtDNICliente.Text.Trim());
-                c.Numero = int.Parse(txtNumeroCliente.Text.Trim());
-                c.Correo = txtCorreoCliente.Text.Trim();
-                c.Fecha = dtpFechaCliente.Value;
-                c.EstadoCliente = chbEstadoCliente.Checked;
-                logCliente.Instancia.modificarCliente(c);
+            if (_clienteID == 0)
+            {
+                MessageBox.Show("Seleccione un cliente de la lista.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception exc) {
-                MessageBox.Show("Error..." + exc);
-            }
+
+            entCliente c = new entCliente
+            {
+                ClienteID = _clienteID,
+                Nombre_Cliente = txtNombreCliente.Text.Trim(),
+                DNI = txtDNICliente.Text.Trim(),
+                Numero = txtNumeroCliente.Text.Trim(),
+                Correo = txtCorreoCliente.Text.Trim(),
+                Fecha = dtpFechaCliente.Value,
+                EstadoCliente = chbEstadoCliente.Checked
+            };
+
+            var result = logCliente.Instancia.modificarCliente(c);
+            if (result.Success)
+                MessageBox.Show("Cliente modificado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             gbDatosCliente.Enabled = false;
             listarCliente();
@@ -75,15 +87,18 @@ namespace MOANSO_PF
 
         private void btnInhabilitarCliente_Click(object sender, EventArgs e)
         {
-            try {
-                entCliente c = new entCliente();
-                c.ClienteID = int.Parse(txtIDCliente.Text.Trim());
-                chbEstadoCliente.Checked = false;
-                logCliente.Instancia.inhabilitarCliente(c);
+            if (_clienteID == 0)
+            {
+                MessageBox.Show("Seleccione un cliente de la lista.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception exc) {
-                MessageBox.Show("Error..." + exc);
-            }
+
+            var result = logCliente.Instancia.inhabilitarCliente(_clienteID);
+            if (result.Success)
+                MessageBox.Show("Cliente inhabilitado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             gbDatosCliente.Enabled = false;
             listarCliente();
@@ -102,19 +117,18 @@ namespace MOANSO_PF
         private void btnConfirmar_Click(object sender, EventArgs e)
         {
             Close();
-            Restaurante restaurante = new Restaurante();
-            restaurante.Show();
         }
 
         private void dgvCliente_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0) return;
             DataGridViewRow filaActual = dgvCliente.Rows[e.RowIndex];
-            txtIDCliente.Text = filaActual.Cells[0].Value.ToString();
+            _clienteID = Convert.ToInt32(filaActual.Cells[0].Value);
             txtNombreCliente.Text = filaActual.Cells[1].Value.ToString();
             txtDNICliente.Text = filaActual.Cells[2].Value.ToString();
             txtNumeroCliente.Text = filaActual.Cells[3].Value.ToString();
             txtCorreoCliente.Text = filaActual.Cells[4].Value.ToString();
-            dtpFechaCliente.Text = filaActual.Cells[5].Value.ToString();
+            dtpFechaCliente.Value = Convert.ToDateTime(filaActual.Cells[5].Value);
             chbEstadoCliente.Checked = Convert.ToBoolean(filaActual.Cells[6].Value);
         }
 

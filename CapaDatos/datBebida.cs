@@ -2,118 +2,93 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CapaEntidad;
 
 namespace CapaDatos
 {
-    public class datBebida
+    public class datBebida : IdatBebida
     {
-        #region Singleton
         private static readonly datBebida _instance = new datBebida();
-        public static datBebida Instancia
+        public static datBebida Instancia { get { return _instance; } }
+
+        public List<entBebida> ListarBebida()
         {
-            get { return datBebida._instance; }
-        }
-        #endregion Singleton
-
-        #region Metodos
-
-        public List<entBebida> ListarBebida() { 
-            SqlCommand cmd = null;
             List<entBebida> list = new List<entBebida>();
-            try {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("spListarBebidas", cn);
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spListarBebidas", cn))
+            {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cn.Open();
-                SqlDataReader dr = cmd.ExecuteReader();
-                while (dr.Read()) { 
-                    entBebida b = new entBebida();
-                    b.IdBebida = Convert.ToInt32(dr["BebidaID"]);
-                    b.NombreBebida = dr["Nombre_Bebida"].ToString();
-                    b.Precio = Convert.ToDecimal(dr["Precio"]);
-                    b.Tamaño = dr["TamañoBebida"].ToString();
-                    b.EstadoBebida = Convert.ToBoolean(dr["EstadoBebida"]);
-                    b.TipoBebida = Convert.ToInt32(dr["TipobebidaID"]);
-                    list.Add(b);
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        list.Add(new entBebida
+                        {
+                            IdBebida = Convert.ToInt32(dr["BebidaID"]),
+                            NombreBebida = dr["Nombre_Bebida"].ToString(),
+                            Precio = Convert.ToDecimal(dr["Precio"]),
+                            Tamaño = dr["TamañoBebida"].ToString(),
+                            EstadoBebida = Convert.ToBoolean(dr["EstadoBebida"]),
+                            TipoBebida = Convert.ToInt32(dr["TipobebidaID"])
+                        });
+                    }
                 }
             }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
             return list;
         }
 
-        public Boolean agregarBebida (entBebida b) {
-            SqlCommand cmd = null;
-            Boolean agregar = false;
-            try {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("spInsertarBebida", cn);
+        public int agregarBebida(entBebida b)
+        {
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            {
+                cn.Open();
+                using (SqlCommand cmdMax = new SqlCommand("SELECT ISNULL(MAX(BebidaID), 0) + 1 FROM Bebida", cn))
+                {
+                    b.IdBebida = (int)cmdMax.ExecuteScalar();
+                }
+                using (SqlCommand cmd = new SqlCommand("spInsertarBebida", cn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@BebidaID", b.IdBebida);
+                    cmd.Parameters.AddWithValue("@Nombre_Bebida", b.NombreBebida);
+                    cmd.Parameters.AddWithValue("@Precio", b.Precio);
+                    cmd.Parameters.AddWithValue("@TamañoBebida", b.Tamaño);
+                    cmd.Parameters.AddWithValue("@EstadoBebida", b.EstadoBebida);
+                    cmd.Parameters.AddWithValue("@TipobebidaID", b.TipoBebida);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            return b.IdBebida;
+        }
+
+        public bool modificarBebida(entBebida b)
+        {
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spEditarBebida", cn))
+            {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@BebidaID", b.IdBebida);
                 cmd.Parameters.AddWithValue("@Nombre_Bebida", b.NombreBebida);
                 cmd.Parameters.AddWithValue("@Precio", b.Precio);
                 cmd.Parameters.AddWithValue("@TamañoBebida", b.Tamaño);
                 cmd.Parameters.AddWithValue("@EstadoBebida", b.EstadoBebida);
-                cmd.Parameters.AddWithValue("@TipoBebidaID", b.TipoBebida);
+                cmd.Parameters.AddWithValue("@TipobebidaID", b.TipoBebida);
+                cn.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
 
-                cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
-                {
-                    agregar = true;
-                }
-            }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
-            return agregar;
-        }
-        public Boolean modificarBebida (entBebida b) {
-            SqlCommand cmd = null;
-            Boolean modificar = false;
-            try {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("spEditarBebida", cn);
-                cmd.Parameters.AddWithValue("@BebidaID", b.IdBebida);
-                cmd.Parameters.AddWithValue("@Nombre_Bebida", b.NombreBebida);
-                cmd.Parameters.AddWithValue("@Precio", b.Precio);
-                cmd.Parameters.AddWithValue("@TamañoBebida", b.Tamaño);
-                cmd.Parameters.AddWithValue("@EstadoBebida", b.EstadoBebida);
-                //cmd.Parameters.AddWithValue("@TipoBebida", b.TipoBebida);
-                cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
-                {
-                    modificar = true;
-                }
-            }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
-            return modificar;
-        }
-        public Boolean inhabilitarBebida (entBebida b) {
-            SqlCommand cmd = null;
-            Boolean inhabilitar = false;
-            try {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("spDeshabilitarBebida", cn);
+        public bool inhabilitarBebida(int bebidaID)
+        {
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spDeshabilitarBebida", cn))
+            {
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@BebidaID", b.IdBebida);
+                cmd.Parameters.AddWithValue("@BebidaID", bebidaID);
                 cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
-                {
-                    inhabilitar = true;
-                }
+                return cmd.ExecuteNonQuery() > 0;
             }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
-            return inhabilitar;
         }
-
-        #endregion Metodos
     }
 }

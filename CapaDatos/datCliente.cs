@@ -1,137 +1,97 @@
-﻿    using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CapaEntidad;
 
 namespace CapaDatos
 {
-    public class datCliente
+    public class datCliente : IdatCliente
     {
-        #region Singleton
         private static readonly datCliente _instance = new datCliente();
-        public static datCliente Instancia { 
-            get { return datCliente._instance; }
-        }
-        #endregion Singleton
-
-        #region Metodos
+        public static datCliente Instancia { get { return _instance; } }
 
         public List<entCliente> ListarCliente()
         {
-            SqlCommand cmd = null;
             List<entCliente> lista = new List<entCliente>();
-            try
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spListarClientes", cn))
             {
-                SqlConnection cn = Conexion.Instancia.Conectar(); //singleton
-                cmd = new SqlCommand("spListarClientes", cn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cn.Open();
-                SqlDataReader dr = cmd.ExecuteReader();
-                while (dr.Read())
+                using (SqlDataReader dr = cmd.ExecuteReader())
                 {
-                    entCliente Cli = new entCliente();
-                    Cli.ClienteID = Convert.ToInt32(dr["ClienteID"]);
-                    Cli.Nombre_Cliente = dr["Nombre_Cliente"].ToString();
-                    Cli.DNI = Convert.ToInt32(dr["DNI"]);
-                    Cli.Numero = Convert.ToInt32(dr["Numero"]);
-                    Cli.Correo = dr["Correo"].ToString();
-                    Cli.Fecha = Convert.ToDateTime(dr["Fecha"]);
-                    Cli.EstadoCliente = Convert.ToBoolean(dr["EstadoCliente"]);
-                    lista.Add(Cli);
+                    while (dr.Read())
+                    {
+                        lista.Add(new entCliente
+                        {
+                            ClienteID = Convert.ToInt32(dr["ClienteID"]),
+                            Nombre_Cliente = dr["Nombre_Cliente"].ToString(),
+                            DNI = dr["DNI"].ToString(),
+                            Numero = dr["Numero"].ToString(),
+                            Correo = dr["Correo"].ToString(),
+                            Fecha = Convert.ToDateTime(dr["Fecha"]),
+                            EstadoCliente = Convert.ToBoolean(dr["EstadoCliente"])
+                        });
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally
-            {
-                cmd.Connection.Close();
             }
             return lista;
         }
 
-        public Boolean agregarCliente (entCliente Cli) { 
-            SqlCommand cmd = null;
-            Boolean agregar = false;
-            try {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("SpInsertarCliente", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@ClienteID", Cli.ClienteID);
-                cmd.Parameters.AddWithValue("@Nombre_Cliente", Cli.Nombre_Cliente);
-                cmd.Parameters.AddWithValue("@DNI", Cli.DNI);
-                cmd.Parameters.AddWithValue("@Numero", Cli.Numero);
-                cmd.Parameters.AddWithValue("@Correo", Cli.Correo);
-                cmd.Parameters.AddWithValue("@Fecha", Cli.Fecha);
-                cmd.Parameters.AddWithValue("@EstadoCliente", Cli.EstadoCliente);
+        public int agregarCliente(entCliente Cli)
+        {
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            {
                 cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0) { 
-                    agregar = true;
-                }
-            }
-            catch (Exception e) {
-                throw e;
-            }
-            finally {
-                if (cmd != null) cmd.Connection.Close();
-            }
-            return agregar;
-        }
-
-        public Boolean modificarCliente (entCliente Cli) {
-            SqlCommand cmd = null;
-            Boolean modificar = false;
-            try {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("spEditarCliente", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@ClienteID", Cli.ClienteID);
-                cmd.Parameters.AddWithValue("@Nombre_Cliente", Cli.Nombre_Cliente);
-                cmd.Parameters.AddWithValue("@DNI", Cli.DNI);
-                cmd.Parameters.AddWithValue("@Numero", Cli.Numero);
-                cmd.Parameters.AddWithValue("@Correo", Cli.Correo);
-                cmd.Parameters.AddWithValue("@Fecha", Cli.Fecha);
-                cmd.Parameters.AddWithValue("@EstadoCliente", Cli.EstadoCliente);
-                cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0) {
-                    modificar = true;
-                }
-            }
-            catch (Exception e) {
-                throw e;
-            }
-            finally { 
-                if (cmd != null) cmd.Connection.Close();
-            }
-            return modificar;
-        }
-
-        public Boolean inhabilitarCliente (entCliente Cli) { 
-            SqlCommand cmd = null;
-            Boolean inhabilitar = false;
-            try {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("spDeshabilitarCliente", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@ClienteID", Cli.ClienteID);
-                cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
+                using (SqlCommand cmdMax = new SqlCommand("SELECT ISNULL(MAX(ClienteID), 0) + 1 FROM Cliente", cn))
                 {
-                    inhabilitar = true;
+                    Cli.ClienteID = (int)cmdMax.ExecuteScalar();
+                }
+                using (SqlCommand cmd = new SqlCommand("spInsertarCliente", cn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@ClienteID", Cli.ClienteID);
+                    cmd.Parameters.AddWithValue("@Nombre_Cliente", Cli.Nombre_Cliente);
+                    cmd.Parameters.AddWithValue("@DNI", Cli.DNI);
+                    cmd.Parameters.AddWithValue("@Numero", Cli.Numero);
+                    cmd.Parameters.AddWithValue("@Correo", Cli.Correo);
+                    cmd.Parameters.AddWithValue("@Fecha", Cli.Fecha);
+                    cmd.Parameters.AddWithValue("@EstadoCliente", Cli.EstadoCliente);
+                    cmd.ExecuteNonQuery();
                 }
             }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
-            return inhabilitar;
+            return Cli.ClienteID;
         }
-        #endregion Metodos
+
+        public bool modificarCliente(entCliente Cli)
+        {
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spEditarCliente", cn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@ClienteID", Cli.ClienteID);
+                cmd.Parameters.AddWithValue("@Nombre_Cliente", Cli.Nombre_Cliente);
+                cmd.Parameters.AddWithValue("@DNI", Cli.DNI);
+                cmd.Parameters.AddWithValue("@Numero", Cli.Numero);
+                cmd.Parameters.AddWithValue("@Correo", Cli.Correo);
+                cmd.Parameters.AddWithValue("@Fecha", Cli.Fecha);
+                cmd.Parameters.AddWithValue("@EstadoCliente", Cli.EstadoCliente);
+                cn.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+
+        public bool inhabilitarCliente(int clienteID)
+        {
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spDeshabilitarCliente", cn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@ClienteID", clienteID);
+                cn.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
     }
 }

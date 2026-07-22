@@ -10,7 +10,7 @@ namespace CapaEntidad
     {
         public int IdInsumo { get; set; }
         public string NombreInsumo { get; set; }
-        public string Cantidad { get; set; }
-        public Boolean EstadoInsumos { get; set; }
+        public decimal Cantidad { get; set; }
+        public bool EstadoInsumos { get; set; }
     }
 }

@@ -65,9 +65,9 @@
             this.gbDatosMesero.Controls.Add(this.txtNombreMesero);
             this.gbDatosMesero.Controls.Add(this.txtDNIMesero);
             this.gbDatosMesero.Location = new System.Drawing.Point(40, 26);
-            this.gbDatosMesero.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.gbDatosMesero.Margin = new System.Windows.Forms.Padding(4);
             this.gbDatosMesero.Name = "gbDatosMesero";
-            this.gbDatosMesero.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.gbDatosMesero.Padding = new System.Windows.Forms.Padding(4);
             this.gbDatosMesero.Size = new System.Drawing.Size(472, 329);
             this.gbDatosMesero.TabIndex = 23;
             this.gbDatosMesero.TabStop = false;
@@ -75,111 +75,113 @@
             // 
             // dtpFechaIngreso
             // 
-            this.dtpFechaIngreso.Location = new System.Drawing.Point(192, 244);
-            this.dtpFechaIngreso.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dtpFechaIngreso.Location = new System.Drawing.Point(160, 215);
+            this.dtpFechaIngreso.Margin = new System.Windows.Forms.Padding(4);
             this.dtpFechaIngreso.Name = "dtpFechaIngreso";
-            this.dtpFechaIngreso.Size = new System.Drawing.Size(265, 22);
+            this.dtpFechaIngreso.Size = new System.Drawing.Size(265, 27);
             this.dtpFechaIngreso.TabIndex = 11;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(59, 254);
+            this.label5.Location = new System.Drawing.Point(20, 220);
             this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(115, 16);
+            this.label5.Size = new System.Drawing.Size(124, 20);
             this.label5.TabIndex = 10;
             this.label5.Text = "Fecha de Ingreso:";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(59, 202);
+            this.label1.Location = new System.Drawing.Point(20, 178);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(64, 16);
+            this.label1.Size = new System.Drawing.Size(70, 20);
             this.label1.TabIndex = 8;
             this.label1.Text = "Telefono:";
             // 
             // txtTelefono
             // 
-            this.txtTelefono.Location = new System.Drawing.Point(136, 193);
-            this.txtTelefono.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtTelefono.Location = new System.Drawing.Point(160, 171);
+            this.txtTelefono.Margin = new System.Windows.Forms.Padding(4);
             this.txtTelefono.Name = "txtTelefono";
-            this.txtTelefono.Size = new System.Drawing.Size(132, 22);
+            this.txtTelefono.Size = new System.Drawing.Size(132, 27);
             this.txtTelefono.TabIndex = 9;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(59, 54);
+            this.label2.Location = new System.Drawing.Point(20, 81);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(72, 16);
+            this.label2.Size = new System.Drawing.Size(80, 20);
             this.label2.TabIndex = 1;
             this.label2.Text = "ID Mesero:";
+            this.label2.Visible = false;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(59, 106);
+            this.label3.Location = new System.Drawing.Point(20, 40);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(108, 16);
+            this.label3.Size = new System.Drawing.Size(120, 20);
             this.label3.TabIndex = 2;
             this.label3.Text = "Nombre Mesero:";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(59, 156);
+            this.label4.Location = new System.Drawing.Point(20, 127);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(82, 16);
+            this.label4.Size = new System.Drawing.Size(91, 20);
             this.label4.TabIndex = 3;
             this.label4.Text = "DNI Mesero:";
             // 
             // chbEstadoMesero
             // 
             this.chbEstadoMesero.AutoSize = true;
-            this.chbEstadoMesero.Location = new System.Drawing.Point(211, 300);
-            this.chbEstadoMesero.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chbEstadoMesero.Location = new System.Drawing.Point(24, 279);
+            this.chbEstadoMesero.Margin = new System.Windows.Forms.Padding(4);
             this.chbEstadoMesero.Name = "chbEstadoMesero";
-            this.chbEstadoMesero.Size = new System.Drawing.Size(72, 20);
+            this.chbEstadoMesero.Size = new System.Drawing.Size(76, 24);
             this.chbEstadoMesero.TabIndex = 4;
             this.chbEstadoMesero.Text = "Estado";
             this.chbEstadoMesero.UseVisualStyleBackColor = true;
             // 
             // txtIdMesero
             // 
-            this.txtIdMesero.Location = new System.Drawing.Point(139, 46);
-            this.txtIdMesero.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtIdMesero.Location = new System.Drawing.Point(160, 81);
+            this.txtIdMesero.Margin = new System.Windows.Forms.Padding(4);
             this.txtIdMesero.Name = "txtIdMesero";
-            this.txtIdMesero.Size = new System.Drawing.Size(132, 22);
+            this.txtIdMesero.Size = new System.Drawing.Size(132, 27);
             this.txtIdMesero.TabIndex = 5;
+            this.txtIdMesero.Visible = false;
             // 
             // txtNombreMesero
             // 
-            this.txtNombreMesero.Location = new System.Drawing.Point(180, 97);
-            this.txtNombreMesero.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtNombreMesero.Location = new System.Drawing.Point(160, 37);
+            this.txtNombreMesero.Margin = new System.Windows.Forms.Padding(4);
             this.txtNombreMesero.Name = "txtNombreMesero";
-            this.txtNombreMesero.Size = new System.Drawing.Size(132, 22);
+            this.txtNombreMesero.Size = new System.Drawing.Size(132, 27);
             this.txtNombreMesero.TabIndex = 6;
             // 
             // txtDNIMesero
             // 
-            this.txtDNIMesero.Location = new System.Drawing.Point(156, 148);
-            this.txtDNIMesero.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtDNIMesero.Location = new System.Drawing.Point(160, 120);
+            this.txtDNIMesero.Margin = new System.Windows.Forms.Padding(4);
             this.txtDNIMesero.Name = "txtDNIMesero";
-            this.txtDNIMesero.Size = new System.Drawing.Size(132, 22);
+            this.txtDNIMesero.Size = new System.Drawing.Size(132, 27);
             this.txtDNIMesero.TabIndex = 7;
             // 
             // btnInhabilitarMesero
             // 
-            this.btnInhabilitarMesero.Location = new System.Drawing.Point(240, 421);
-            this.btnInhabilitarMesero.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnInhabilitarMesero.Location = new System.Drawing.Point(232, 408);
+            this.btnInhabilitarMesero.Margin = new System.Windows.Forms.Padding(4);
             this.btnInhabilitarMesero.Name = "btnInhabilitarMesero";
-            this.btnInhabilitarMesero.Size = new System.Drawing.Size(100, 46);
+            this.btnInhabilitarMesero.Size = new System.Drawing.Size(100, 30);
             this.btnInhabilitarMesero.TabIndex = 22;
             this.btnInhabilitarMesero.Text = "Inhabilitar";
             this.btnInhabilitarMesero.UseVisualStyleBackColor = true;
@@ -187,20 +189,21 @@
             // 
             // btnConfirmar
             // 
-            this.btnConfirmar.Location = new System.Drawing.Point(941, 490);
-            this.btnConfirmar.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnConfirmar.Location = new System.Drawing.Point(757, 459);
+            this.btnConfirmar.Margin = new System.Windows.Forms.Padding(4);
             this.btnConfirmar.Name = "btnConfirmar";
             this.btnConfirmar.Size = new System.Drawing.Size(100, 28);
             this.btnConfirmar.TabIndex = 19;
             this.btnConfirmar.Text = "Confirmar";
             this.btnConfirmar.UseVisualStyleBackColor = true;
+            this.btnConfirmar.Click += new System.EventHandler(this.btnConfirmar_Click);
             // 
             // btnModificarMesero
             // 
-            this.btnModificarMesero.Location = new System.Drawing.Point(324, 362);
-            this.btnModificarMesero.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnModificarMesero.Location = new System.Drawing.Point(311, 363);
+            this.btnModificarMesero.Margin = new System.Windows.Forms.Padding(4);
             this.btnModificarMesero.Name = "btnModificarMesero";
-            this.btnModificarMesero.Size = new System.Drawing.Size(100, 46);
+            this.btnModificarMesero.Size = new System.Drawing.Size(100, 28);
             this.btnModificarMesero.TabIndex = 21;
             this.btnModificarMesero.Text = "Modificar";
             this.btnModificarMesero.UseVisualStyleBackColor = true;
@@ -208,18 +211,19 @@
             // 
             // btnCancelar
             // 
-            this.btnCancelar.Location = new System.Drawing.Point(520, 490);
-            this.btnCancelar.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnCancelar.Location = new System.Drawing.Point(402, 459);
+            this.btnCancelar.Margin = new System.Windows.Forms.Padding(4);
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(100, 28);
             this.btnCancelar.TabIndex = 18;
             this.btnCancelar.Text = "Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = true;
+            this.btnCancelar.Click += new System.EventHandler(this.btnCancelar_Click);
             // 
             // btnRegresar
             // 
-            this.btnRegresar.Location = new System.Drawing.Point(103, 490);
-            this.btnRegresar.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnRegresar.Location = new System.Drawing.Point(13, 459);
+            this.btnRegresar.Margin = new System.Windows.Forms.Padding(4);
             this.btnRegresar.Name = "btnRegresar";
             this.btnRegresar.Size = new System.Drawing.Size(100, 28);
             this.btnRegresar.TabIndex = 17;
@@ -229,10 +233,10 @@
             // 
             // btnAgregarMesero
             // 
-            this.btnAgregarMesero.Location = new System.Drawing.Point(152, 362);
-            this.btnAgregarMesero.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnAgregarMesero.Location = new System.Drawing.Point(151, 363);
+            this.btnAgregarMesero.Margin = new System.Windows.Forms.Padding(4);
             this.btnAgregarMesero.Name = "btnAgregarMesero";
-            this.btnAgregarMesero.Size = new System.Drawing.Size(100, 46);
+            this.btnAgregarMesero.Size = new System.Drawing.Size(100, 28);
             this.btnAgregarMesero.TabIndex = 20;
             this.btnAgregarMesero.Text = "Agregar";
             this.btnAgregarMesero.UseVisualStyleBackColor = true;
@@ -241,19 +245,20 @@
             // dgvMesero
             // 
             this.dgvMesero.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvMesero.Location = new System.Drawing.Point(541, 26);
-            this.dgvMesero.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dgvMesero.Location = new System.Drawing.Point(530, 26);
+            this.dgvMesero.Margin = new System.Windows.Forms.Padding(4);
             this.dgvMesero.Name = "dgvMesero";
             this.dgvMesero.RowHeadersWidth = 51;
-            this.dgvMesero.Size = new System.Drawing.Size(521, 364);
+            this.dgvMesero.Size = new System.Drawing.Size(310, 364);
             this.dgvMesero.TabIndex = 16;
-            this.dgvMesero.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPlatillo_CellContentClick);
+            this.dgvMesero.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvMesero_CellContentClick);
             // 
             // MantenedorMesero
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1116, 544);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(237)))), ((int)(((byte)(214)))));
+            this.ClientSize = new System.Drawing.Size(870, 500);
             this.Controls.Add(this.gbDatosMesero);
             this.Controls.Add(this.btnInhabilitarMesero);
             this.Controls.Add(this.btnConfirmar);
@@ -262,9 +267,11 @@
             this.Controls.Add(this.btnRegresar);
             this.Controls.Add(this.btnAgregarMesero);
             this.Controls.Add(this.dgvMesero);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "MantenedorMesero";
-            this.Text = "MantenedorMesero";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Meseros";
             this.gbDatosMesero.ResumeLayout(false);
             this.gbDatosMesero.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvMesero)).EndInit();

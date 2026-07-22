@@ -10,9 +10,9 @@ namespace CapaEntidad
     {
         public int IdMesero { get; set; }
         public string NombreMesero { get; set; }
-        public int DNIMesero { get; set; }
-        public int Telefono { get; set; }
+        public string DNIMesero { get; set; }
+        public string Telefono { get; set; }
         public DateTime FechaIngreso { get; set; }
-        public Boolean EstadoMesero { get; set; }
+        public bool EstadoMesero { get; set; }
     }
 }

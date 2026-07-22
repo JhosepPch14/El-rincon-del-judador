@@ -2,114 +2,84 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CapaEntidad;
 
 namespace CapaDatos
 {
-    public class datTPlatillo
+    public class datTPlatillo : IdatTPlatillo
     {
-        #region Singleton
         private static readonly datTPlatillo _instance = new datTPlatillo();
-        public static datTPlatillo Instancia
+        public static datTPlatillo Instancia { get { return _instance; } }
+
+        public List<entTPlatillo> ListarTPlatillo()
         {
-            get { return datTPlatillo._instance; }
-        }
-        #endregion Singleton
-
-        #region Metodos
-
-        public List<entTPlatillo> ListarTPlatillo() {
-            SqlCommand cmd = null;
-            List<entTPlatillo> lista = new List<entTPlatillo>();
-            try {
-                SqlConnection cn = Conexion.Instancia.Conectar(); //singleton
-                cmd = new SqlCommand("spListarTiposPlatillo", cn);
+            List<entTPlatillo> list = new List<entTPlatillo>();
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spListarTiposPlatillo", cn))
+            {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cn.Open();
-                SqlDataReader dr = cmd.ExecuteReader();
-                while (dr.Read()) { 
-                    entTPlatillo tp = new entTPlatillo
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
                     {
-                        IdTipoPlatillo = Convert.ToInt32(dr["IDTipoPlatillo"]),
-                        NombreTipo = dr["NombreTipo"].ToString(),
-                        EstadoTPlatillo = Convert.ToBoolean(dr["Estado"])
-                    };
-
-                    lista.Add(tp);
+                        list.Add(new entTPlatillo
+                        {
+                            IdTipoPlatillo = Convert.ToInt32(dr["IdTipoPlatillo"]),
+                            NombreTipo = dr["NombreTipo"].ToString(),
+                            EstadoTPlatillo = Convert.ToBoolean(dr["Estado"])
+                        });
+                    }
                 }
             }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
-            return lista;
+            return list;
         }
-        public Boolean agregarTPlatillo (entTPlatillo tp) {
-            SqlCommand cmd = null;
-            Boolean agregar = false;
-            try
+
+        public int agregarTPlatillo(entTPlatillo tp)
+        {
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
             {
-                SqlConnection cn = Conexion.Instancia.Conectar(); //singleton
-                cmd = new SqlCommand("spInsertarTipoPlatillo", cn);
+                cn.Open();
+                using (SqlCommand cmdMax = new SqlCommand("SELECT ISNULL(MAX(IdTipoPlatillo), 0) + 1 FROM Tipoplatillo", cn))
+                {
+                    tp.IdTipoPlatillo = (int)cmdMax.ExecuteScalar();
+                }
+                using (SqlCommand cmd = new SqlCommand("spInsertarTipoPlatillo", cn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@IdTipoPlatillo", tp.IdTipoPlatillo);
+                    cmd.Parameters.AddWithValue("@NombreTipo", tp.NombreTipo);
+                    cmd.Parameters.AddWithValue("@Estado", tp.EstadoTPlatillo);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            return tp.IdTipoPlatillo;
+        }
+
+        public bool modificarTPlatillo(entTPlatillo tp)
+        {
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spEditarTipoPlatillo", cn))
+            {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@IdTipoPlatillo", tp.IdTipoPlatillo);
                 cmd.Parameters.AddWithValue("@NombreTipo", tp.NombreTipo);
                 cmd.Parameters.AddWithValue("@Estado", tp.EstadoTPlatillo);
                 cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
-                {
-                    agregar = true;
-                }
+                return cmd.ExecuteNonQuery() > 0;
             }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
-            return agregar;
-        }
-        public Boolean modificarTPlatillo (entTPlatillo tp) {
-            SqlCommand cmd = null;
-            Boolean modificar = false;
-            try
-            {
-                SqlConnection cn = Conexion.Instancia.Conectar(); //singleton
-                cmd = new SqlCommand("spEditarTipoPlatillo", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cn.Open();
-                cmd.Parameters.AddWithValue("@IdTipoPlatillo", tp.IdTipoPlatillo);
-                cmd.Parameters.AddWithValue("@NombreTipo", tp.NombreTipo);
-                cmd.Parameters.AddWithValue("@EstadoTPlatillo", tp.EstadoTPlatillo);
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
-                {
-                    modificar = true;
-                }
-            }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
-            return modificar;
-        }
-        public Boolean inhabilitarTPlatillo (entTPlatillo tp) {
-            SqlCommand cmd = null;
-            Boolean inhabilitar = false;
-            try
-            {
-                SqlConnection cn = Conexion.Instancia.Conectar(); //singleton
-                cmd = new SqlCommand("spDeshabilitarTipoPlatillo", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@IdTipoPlatillo", tp.IdTipoPlatillo);
-                cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
-                {
-                    inhabilitar = true;
-                }
-            }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
-            return inhabilitar;
         }
 
-        #endregion Metodos
+        public bool inhabilitarTPlatillo(int idTipo)
+        {
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spDeshabilitarTipoPlatillo", cn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@IdTipoPlatillo", idTipo);
+                cn.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
     }
 }

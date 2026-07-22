@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CapaEntidad;
 using CapaLogica;
@@ -14,40 +7,47 @@ namespace MOANSO_PF
 {
     public partial class MantenedorEncargardoAlmacen : Form
     {
+        private int _encargadoID = 0;
+
         public MantenedorEncargardoAlmacen()
         {
             InitializeComponent();
-            gbDatos.Enabled = false;    
+            gbDatos.Enabled = false;
             listarEnAlmacen();
         }
+
         public void listarEnAlmacen()
         {
             dgvEnAlmacen.DataSource = logEnAlmacen.Instancia.ListarEnAlmacen();
         }
+
         public void limpiarVariables()
         {
-            txtIDEnAlmacen.Text = "";
             txtDNIEnAlmacen.Text = "";
             txtNombreEnAlmacen.Text = "";
             txtNumeroEnAlmacen.Text = "";
+            dtpFechaRegistro.Value = DateTime.Now;
+            chbEstadoEnAlmacen.Checked = true;
+            _encargadoID = 0;
         }
+
         private void btnAgregar_Click(object sender, EventArgs e)
         {
-            try
+            entEnAlmacen ea = new entEnAlmacen
             {
-                entEnAlmacen ea = new entEnAlmacen();
-                ea.IDEnAlmacen = int.Parse(txtIDEnAlmacen.Text.Trim());
-                ea.Nombre= txtNombreEnAlmacen.Text.Trim();
-                ea.DNI = txtDNIEnAlmacen.Text.Trim();
-                ea.Numero = txtNumeroEnAlmacen.Text.Trim();
-                ea.FechaIngreso = dtpFechaRegistro.Value;
-                ea.Estado = chbEstadoEnAlmacen.Checked;
-                logEnAlmacen.Instancia.agregarEnAlmacen(ea);
-            }
-            catch (Exception exc)
-            {
-                MessageBox.Show("Error..." + exc);
-            }
+                Nombre = txtNombreEnAlmacen.Text.Trim(),
+                DNI = txtDNIEnAlmacen.Text.Trim(),
+                Numero = txtNumeroEnAlmacen.Text.Trim(),
+                FechaIngreso = dtpFechaRegistro.Value,
+                Estado = chbEstadoEnAlmacen.Checked
+            };
+
+            var result = logEnAlmacen.Instancia.agregarEnAlmacen(ea);
+            if (result.Success)
+                MessageBox.Show("Encargado registrado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             gbDatos.Enabled = false;
             listarEnAlmacen();
@@ -55,22 +55,28 @@ namespace MOANSO_PF
 
         private void btnModificar_Click(object sender, EventArgs e)
         {
-            try
+            if (_encargadoID == 0)
             {
-                entEnAlmacen ea = new entEnAlmacen();
-                ea.IDEnAlmacen = int.Parse(txtIDEnAlmacen.Text.Trim());
-                ea.Nombre = txtNombreEnAlmacen.Text.Trim();
-                ea.DNI = txtDNIEnAlmacen.Text.Trim();
-                ea.Numero = txtNumeroEnAlmacen.Text.Trim();
-                ea.FechaIngreso = dtpFechaRegistro.Value;
-                ea.Estado = chbEstadoEnAlmacen.Checked;
-                logEnAlmacen.Instancia.agregarEnAlmacen(ea);
-                logEnAlmacen.Instancia.modificarEnAlmacen(ea);
+                MessageBox.Show("Seleccione un encargado de la lista.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception exc)
+
+            entEnAlmacen ea = new entEnAlmacen
             {
-                MessageBox.Show("Error..." + exc);
-            }
+                IDEnAlmacen = _encargadoID,
+                Nombre = txtNombreEnAlmacen.Text.Trim(),
+                DNI = txtDNIEnAlmacen.Text.Trim(),
+                Numero = txtNumeroEnAlmacen.Text.Trim(),
+                FechaIngreso = dtpFechaRegistro.Value,
+                Estado = chbEstadoEnAlmacen.Checked
+            };
+
+            var result = logEnAlmacen.Instancia.modificarEnAlmacen(ea);
+            if (result.Success)
+                MessageBox.Show("Encargado modificado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             gbDatos.Enabled = false;
             listarEnAlmacen();
@@ -78,17 +84,18 @@ namespace MOANSO_PF
 
         private void btnInhabilitar_Click(object sender, EventArgs e)
         {
-            try
+            if (_encargadoID == 0)
             {
-                entEnAlmacen ea = new entEnAlmacen();
-                ea.IDEnAlmacen = int.Parse(txtIDEnAlmacen.Text.Trim());
-                chbEstadoEnAlmacen.Checked = false;
-                logEnAlmacen.Instancia.deshabilitarEnAlmacen(ea);
+                MessageBox.Show("Seleccione un encargado de la lista.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception exc)
-            {
-                MessageBox.Show("Error..." + exc);
-            }
+
+            var result = logEnAlmacen.Instancia.inhabilitarEnAlmacen(_encargadoID);
+            if (result.Success)
+                MessageBox.Show("Encargado inhabilitado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             gbDatos.Enabled = false;
             listarEnAlmacen();
@@ -111,13 +118,19 @@ namespace MOANSO_PF
 
         private void dgvEnAlmacen_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0) return;
             DataGridViewRow filaActual = dgvEnAlmacen.Rows[e.RowIndex];
-            txtIDEnAlmacen.Text = filaActual.Cells[0].Value.ToString();
+            _encargadoID = Convert.ToInt32(filaActual.Cells[0].Value);
             txtNombreEnAlmacen.Text = filaActual.Cells[1].Value.ToString();
             txtDNIEnAlmacen.Text = filaActual.Cells[2].Value.ToString();
             txtNumeroEnAlmacen.Text = filaActual.Cells[3].Value.ToString();
-            dtpFechaRegistro.Text = filaActual.Cells[4].Value.ToString();
+            dtpFechaRegistro.Value = Convert.ToDateTime(filaActual.Cells[4].Value);
             chbEstadoEnAlmacen.Checked = Convert.ToBoolean(filaActual.Cells[5].Value);
+        }
+
+        private void btnRegresar_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

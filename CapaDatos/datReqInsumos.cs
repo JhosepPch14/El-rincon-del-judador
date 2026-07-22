@@ -1,96 +1,73 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CapaEntidad;
 
 namespace CapaDatos
 {
-    public class datReqInsumos
+    public class datReqInsumos : IdatReqInsumos
     {
-        #region Singleton
         private static readonly datReqInsumos _instance = new datReqInsumos();
-        public static datReqInsumos Instancia
-        {
-            get { return datReqInsumos._instance; }
-        }
-        #endregion Singleton
-
-        #region Metodos
+        public static datReqInsumos Instancia { get { return _instance; } }
 
         public List<entReqInsumos> ListarReq()
         {
-            SqlCommand cmd = null;
             List<entReqInsumos> list = new List<entReqInsumos>();
-            try {
-                SqlConnection cn = Conexion.Instancia.Conectar(); //singleton
-                cmd = new SqlCommand("spListarRequerimientos", cn);
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spListarRequerimientos", cn))
+            {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cn.Open();
-                SqlDataReader dr = cmd.ExecuteReader();
-                while (dr.Read()) {
-                    entReqInsumos ri = new entReqInsumos()
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
                     {
-                        IDRequerimiento = Convert.ToInt32(dr["RequerimientoDeInsumoID"]),
-                        Estado = Convert.ToBoolean(dr["Estado"].ToString()),
-                        FechaRegistro = Convert.ToDateTime(dr["FechaRegistro"]),
-                        IDEncargado = Convert.ToInt32(dr["IDEncargado"])
-                    };
-                    list.Add(ri);
+                        list.Add(new entReqInsumos
+                        {
+                            IDRequerimiento = Convert.ToInt32(dr["RequerimientoDeInsumoID"]),
+                            FechaRegistro = Convert.ToDateTime(dr["FechaRegistro"]),
+                            Estado = Convert.ToBoolean(dr["Estado"]),
+                            IDEncargado = Convert.ToInt32(dr["IDEncargado"])
+                        });
+                    }
                 }
             }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
             return list;
         }
-        public Boolean registrarReq(entReqInsumos ri) {
-            SqlCommand cmd = null;
-            Boolean registrar = false;
-            try {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("spRegistrarRequerimiento", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@RequerimientoDeInsumoID", ri.IDRequerimiento);
-                cmd.Parameters.AddWithValue("@Estado", ri.Estado);
-                cmd.Parameters.AddWithValue("@FechaRegistro", ri.FechaRegistro);
-                cmd.Parameters.AddWithValue("@EncargadoalmacenID", ri.IDEncargado);
-                cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
-                {
-                    registrar = true;
-                }
-            }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
-            return registrar;
-        }
-        public Boolean anularReq(entReqInsumos ri)
+
+        public int registrarReq(entReqInsumos req)
         {
-            SqlCommand cmd = null;
-            Boolean anular = false;
-            try
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
             {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("spAnularRequerimiento", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@RequerimientoDeInsumoID", ri.IDRequerimiento);
                 cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
+                using (SqlCommand cmdMax = new SqlCommand("SELECT ISNULL(MAX(RequerimientoDeInsumoID), 0) + 1 FROM RequerimientoDeInsumo", cn))
                 {
-                    anular = true;
+                    req.IDRequerimiento = (int)cmdMax.ExecuteScalar();
+                }
+                using (SqlCommand cmd = new SqlCommand("spRegistrarRequerimiento", cn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@RequerimientoDeInsumoID", req.IDRequerimiento);
+                    cmd.Parameters.AddWithValue("@Estado", req.Estado);
+                    cmd.Parameters.AddWithValue("@FechaRegistro", req.FechaRegistro);
+                    cmd.Parameters.AddWithValue("@EncargadoalmacenID", req.IDEncargado);
+                    cmd.ExecuteNonQuery();
                 }
             }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
-            return anular;
+            return req.IDRequerimiento;
         }
 
-        #endregion Metodos
+        public bool anularReq(int reqID)
+        {
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spAnularRequerimiento", cn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@RequerimientoDeInsumoID", reqID);
+                cn.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
     }
 }

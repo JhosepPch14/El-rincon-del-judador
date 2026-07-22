@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CapaEntidad;
 using CapaLogica;
@@ -14,26 +9,32 @@ namespace MOANSO_PF
 {
     public partial class OrdenPedido : Form
     {
+        private readonly List<entDetallePedido> listaDetalles = new List<entDetallePedido>();
+        private int _pedidoID = 0;
+        private int _detalleSeleccionado = -1;
+
         public OrdenPedido()
         {
             InitializeComponent();
             listarOrdenPedido();
             llenarDatosCB();
         }
-        private List<entDetallePedido> listaDetalles = new List<entDetallePedido>();
 
         public void listarOrdenPedido()
         {
             dgvOrden.DataSource = logOrdenPedido.Instancia.ListarOrdenes();
         }
+
         public void listarDetallePedido(int pedidoID)
         {
             dgvDetalles.DataSource = logDetallePedido.Instancia.ListarDetalles(pedidoID);
         }
+
         public void limpiarVariables()
         {
             txtNroMesa.Text = "";
         }
+
         public void llenarDatosCB()
         {
             cbTPlatillo.DataSource = logTPlatillo.Instancia.ListarTPlatillo();
@@ -44,220 +45,206 @@ namespace MOANSO_PF
             cbPlatilloPedido.DisplayMember = "NombrePlatillo";
             cbPlatilloPedido.ValueMember = "IdPlatillo";
 
-            //cbBebidas.DataSource = logTipoBebida.Instancia.ListarTBebida();
-            //cbBebidas.DisplayMember = "NombreTipo";
-            //cbBebidas.ValueMember = "IdTipoBebida";
-
             cbMeseros.DataSource = logMesero.Instancia.ListarMesero();
             cbMeseros.DisplayMember = "NombreMesero";
             cbMeseros.ValueMember = "IdMesero";
         }
-        private decimal obtenerPrecioPlatillo() {
+
+        private decimal obtenerPrecioPlatillo()
+        {
             if (cbPlatilloPedido.SelectedItem is entPlatillo platillo)
-            {
                 return platillo.PrecioPlatillo;
-            }
             return 0;
         }
 
         private void btnAgregarPedido_Click(object sender, EventArgs e)
         {
-            try { 
-                entOrdenPedido op = new entOrdenPedido();
-                op.PedidoID = int.Parse(txtIdPedido.Text.Trim());
-                op.Fecha = dtpFechaOrden.Value;
-                op.NroMesa = int.Parse(txtNroMesa.Text.Trim());
-                op.Total = 0;
-                op.EstadoPedido = chbEstadoOrden.Checked;
-                op.MeseroID = Convert.ToInt32(cbMeseros.SelectedValue);
-                logOrdenPedido.Instancia.agregarOrden(op);
-            }
-            catch (Exception exc)
+            if (!int.TryParse(txtNroMesa.Text.Trim(), out int nroMesa))
             {
-                MessageBox.Show("Error..." + exc);
+                MessageBox.Show("Nro de Mesa debe ser un valor numérico válido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
+
+            entOrdenPedido op = new entOrdenPedido
+            {
+                Fecha = dtpFechaOrden.Value,
+                NroMesa = nroMesa,
+                Total = 0,
+                EstadoPedido = chbEstadoOrden.Checked,
+                MeseroID = Convert.ToInt32(cbMeseros.SelectedValue)
+            };
+
+            var result = logOrdenPedido.Instancia.agregarOrden(op);
+            if (result.Success)
+            {
+                _pedidoID = result.Data;
+                MessageBox.Show("Orden registrada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
-            //gbDatosOrdenPedido.Enabled = false;
             listarOrdenPedido();
         }
 
         private void btnGuardarDetalles_Click(object sender, EventArgs e)
         {
-            try {
+            try
+            {
                 int platilloID = Convert.ToInt32(cbPlatilloPedido.SelectedValue);
                 string nombre = cbPlatilloPedido.Text;
-                int cantidad = int.Parse(nudCantidadPlatillo.Text);
+                int cantidad = (int)nudCantidadPlatillo.Value;
                 decimal precio = obtenerPrecioPlatillo();
                 decimal subtotal = cantidad * precio;
 
-                entDetallePedido dp = new entDetallePedido
+                listaDetalles.Add(new entDetallePedido
                 {
                     PlatilloID = platilloID,
                     NombrePlatillo = nombre,
                     Cantidad = cantidad,
                     Precio = precio,
                     Subtotal = subtotal
-                };
-
-                listaDetalles.Add(dp);
+                });
 
                 dgvDetalles.DataSource = null;
                 dgvDetalles.DataSource = listaDetalles;
             }
             catch (Exception exc)
             {
-                MessageBox.Show("Error..." + exc);
+                MessageBox.Show("Error al agregar detalle: " + exc.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            limpiarVariables();
-            gbDatosOrdenPedido.Enabled = false;
-            
         }
+
         private void btnRegistrar_Click(object sender, EventArgs e)
         {
-            int pedidoID = int.Parse(txtIdPedido.Text);
-            List<entDetallePedido> lista = new List<entDetallePedido>();
-
-            foreach (DataGridViewRow row in dgvDetalles.Rows)
+            if (_pedidoID == 0)
             {
-                if (row.Cells["PlatilloID"].Value != null)
-                {
-                    entDetallePedido dp = new entDetallePedido
-                    {
-                        PedidoID = pedidoID,
-                        PlatilloID = Convert.ToInt32(row.Cells["PlatilloID"].Value),
-                        Cantidad = Convert.ToInt32(row.Cells["Cantidad"].Value),
-                        Subtotal = Convert.ToDecimal(row.Cells["Subtotal"].Value)
-                    };
-                    lista.Add(dp);
-                }
+                MessageBox.Show("Primero registre la orden antes de guardar los detalles.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
 
-            if (logDetallePedido.Instancia.registrarDetallePedido(lista, pedidoID))
+            if (logDetallePedido.Instancia.registrarDetallePedido(listaDetalles, _pedidoID))
             {
-                MessageBox.Show("Venta registrada correctamente.");
+                MessageBox.Show("Venta registrada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                decimal total = logDetallePedido.Instancia.CalcularTotalPorPedido(pedidoID);
-                logOrdenPedido.Instancia.actualizarTotal(pedidoID, total);
+                decimal total = logDetallePedido.Instancia.CalcularTotalPorPedido(_pedidoID);
+                logOrdenPedido.Instancia.actualizarTotal(_pedidoID, total);
 
-                listarDetallePedido(pedidoID);
+                listarDetallePedido(_pedidoID);
                 listarOrdenPedido();
+                listaDetalles.Clear();
+            }
+            else
+            {
+                MessageBox.Show("No se pudieron registrar los detalles.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private int detalleSeleccionado = -1;
+
         private void btnModificarDetalle_Click(object sender, EventArgs e)
         {
-            try {
-                var detalle = listaDetalles[detalleSeleccionado];
+            if (_detalleSeleccionado < 0 || _detalleSeleccionado >= listaDetalles.Count)
+            {
+                MessageBox.Show("Seleccione un detalle de la lista.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
+            try
+            {
+                var detalle = listaDetalles[_detalleSeleccionado];
                 detalle.PlatilloID = Convert.ToInt32(cbPlatilloPedido.SelectedValue);
                 detalle.NombrePlatillo = cbPlatilloPedido.Text;
                 detalle.Cantidad = Convert.ToInt32(nudCantidadPlatillo.Value);
                 detalle.Precio = obtenerPrecioPlatillo();
                 detalle.Subtotal = detalle.Cantidad * detalle.Precio;
 
-                // Volver a mostrar la lista actualizada
                 dgvDetalles.DataSource = null;
                 dgvDetalles.DataSource = listaDetalles;
-                //limpiar indice seleccionado
-                detalleSeleccionado = -1;
+                _detalleSeleccionado = -1;
             }
             catch (Exception exc)
             {
-                MessageBox.Show("Error..." + exc);
+                MessageBox.Show("Error al modificar detalle: " + exc.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            limpiarVariables();
         }
 
         private void dgvOrden_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0) return;
             DataGridViewRow filaActual = dgvOrden.Rows[e.RowIndex];
-            txtIdPedido.Text = filaActual.Cells[0].Value.ToString();
-            dtpFechaOrden.Text = filaActual.Cells[1].Value.ToString();
+            _pedidoID = Convert.ToInt32(filaActual.Cells[0].Value);
+            dtpFechaOrden.Value = Convert.ToDateTime(filaActual.Cells[1].Value);
             txtNroMesa.Text = filaActual.Cells[2].Value.ToString();
             chbEstadoOrden.Checked = Convert.ToBoolean(filaActual.Cells[4].Value);
             cbMeseros.Text = filaActual.Cells[5].Value.ToString();
 
-            int pedidoID = Convert.ToInt32(filaActual.Cells[0].Value);
-            dgvDetalles.DataSource = logDetallePedido.Instancia.ListarDetalles(pedidoID);
+            dgvDetalles.DataSource = logDetallePedido.Instancia.ListarDetalles(_pedidoID);
         }
 
         private void dgvDetalles_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0) return;
             DataGridViewRow fila = dgvDetalles.Rows[e.RowIndex];
             cbPlatilloPedido.Text = fila.Cells["NombrePlatillo"].Value.ToString();
             nudCantidadPlatillo.Value = Convert.ToInt32(fila.Cells["Cantidad"].Value);
-
-            detalleSeleccionado = e.RowIndex;
+            _detalleSeleccionado = e.RowIndex;
         }
 
         private void btnEliminarDetalle_Click(object sender, EventArgs e)
         {
-            if (detalleSeleccionado >= 0 && detalleSeleccionado < listaDetalles.Count)
+            if (_detalleSeleccionado >= 0 && _detalleSeleccionado < listaDetalles.Count)
             {
                 var confirmar = MessageBox.Show("¿Desea eliminar este platillo del pedido?",
                     "Confirmar eliminación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (confirmar == DialogResult.Yes)
                 {
-                    listaDetalles.RemoveAt(detalleSeleccionado);
-
-                    // Actualizar el DataGridView
+                    listaDetalles.RemoveAt(_detalleSeleccionado);
                     dgvDetalles.DataSource = null;
                     dgvDetalles.DataSource = listaDetalles;
-
-                    // Limpiar selección
-                    detalleSeleccionado = -1;
+                    _detalleSeleccionado = -1;
                     dgvDetalles.ClearSelection();
                 }
             }
             else
             {
-                MessageBox.Show("Seleccione un platillo del pedido antes de eliminar.");
+                MessageBox.Show("Seleccione un platillo del pedido antes de eliminar.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
         private void cbTPlatillo_SelectedIndexChanged(object sender, EventArgs e)
         {
-            /*if (cbTPlatillo.SelectedValue is int tipoID)
+            if (cbTPlatillo.SelectedValue is int tipoID)
             {
-                // Obtener todos los platillos
-                var platillos = logPlatillo.Instancia.ListarPlatillo();
+                var platillos = logPlatillo.Instancia.ListarPlatillo()
+                    .Where(p => p.IdTipoPlatillo == tipoID).ToList();
 
-                // Filtrar por tipo
-                var platillosFiltrados = platillos
-                    .Where(p => p.IdTipoPlatillo == tipoID)
-                    .ToList();
-
-                // Asignar al ComboBox
-                cbPlatilloPedido.DataSource = platillosFiltrados;
+                cbPlatilloPedido.DataSource = platillos;
                 cbPlatilloPedido.DisplayMember = "NombrePlatillo";
-                cbPlatilloPedido.ValueMember = "PlatilloID";
+                cbPlatilloPedido.ValueMember = "IdPlatillo";
             }
-            */
         }
 
         private void btnDeshOrden_Click(object sender, EventArgs e)
         {
-            try
+            if (_pedidoID == 0)
             {
-                entOrdenPedido op = new entOrdenPedido();
-                op.PedidoID = int.Parse(txtIdPedido.Text.Trim());
-                chbEstadoOrden.Checked = false;
-                logOrdenPedido.Instancia.inhabilitarOrden(op);
+                MessageBox.Show("Seleccione una orden de la lista.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception exc)
-            {
-                MessageBox.Show("Error..." + exc);
-            }
-            limpiarVariables();
-            //gbDatosCliente.Enabled = false;
-            listarOrdenPedido();
 
+            var result = logOrdenPedido.Instancia.inhabilitarOrden(_pedidoID);
+            if (result.Success)
+                MessageBox.Show("Orden anulada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            limpiarVariables();
+            listarOrdenPedido();
         }
 
-        private void OrdenPedido_Load(object sender, EventArgs e)
+        private void btnRegresar_Click(object sender, EventArgs e)
         {
-
+            this.Close();
         }
     }
 }

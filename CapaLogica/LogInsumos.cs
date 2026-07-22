@@ -1,49 +1,76 @@
-﻿using CapaDatos;
-using CapaEntidad;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CapaDatos;
+using CapaEntidad;
 
 namespace CapaLogica
 {
-    public class LogInsumos
+    public class logInsumos : IlogInsumos
     {
-        #region Singleton
-        private static readonly LogInsumos _instancia = new LogInsumos();
-        public static LogInsumos Instancia
-        {
-            get { return _instancia; }
-        }
-        #endregion
-
-        #region Métodos Lógicos
+        private static readonly logInsumos _instancia = new logInsumos();
+        public static logInsumos Instancia { get { return _instancia; } }
 
         public List<entInsumos> ListarInsumos()
         {
             return datInsumos.Instancia.ListarInsumos();
         }
 
-        public bool InsertarInsumo(entInsumos insumo)
+        public Result<int> InsertarInsumo(entInsumos ins)
         {
-            return datInsumos.Instancia.InsertarInsumo(insumo);
+            if (string.IsNullOrWhiteSpace(ins.NombreInsumo))
+                return Result<int>.Fail("El nombre del insumo es obligatorio.");
+
+            if (ins.Cantidad < 0)
+                return Result<int>.Fail("La cantidad no puede ser negativa.");
+
+            try
+            {
+                int newId = datInsumos.Instancia.InsertarInsumo(ins);
+                return Result<int>.Ok(newId);
+            }
+            catch (Exception ex)
+            {
+                return Result<int>.Fail("Error al registrar insumo: " + ex.Message);
+            }
         }
 
-        public  bool ModificarInsumo(entInsumos insumo)
+        public Result<bool> ModificarInsumo(entInsumos ins)
         {
-            return datInsumos.Instancia.ModificarInsumo(insumo);
+            if (ins.IdInsumo <= 0)
+                return Result<bool>.Fail("ID de insumo inválido.");
+
+            if (string.IsNullOrWhiteSpace(ins.NombreInsumo))
+                return Result<bool>.Fail("El nombre del insumo es obligatorio.");
+
+            try
+            {
+                bool result = datInsumos.Instancia.ModificarInsumo(ins);
+                return result
+                    ? Result<bool>.Ok(true)
+                    : Result<bool>.Fail("No se pudo modificar el insumo.");
+            }
+            catch (Exception ex)
+            {
+                return Result<bool>.Fail("Error al modificar insumo: " + ex.Message);
+            }
         }
 
-        public bool InhabilitarInsumo(entInsumos insumo)
+        public Result<bool> InhabilitarInsumo(int insumoID)
         {
-            return datInsumos.Instancia.InhabilitarInsumo(insumo);
-        }
+            if (insumoID <= 0)
+                return Result<bool>.Fail("ID de insumo inválido.");
 
-        #endregion
+            try
+            {
+                bool result = datInsumos.Instancia.InhabilitarInsumo(insumoID);
+                return result
+                    ? Result<bool>.Ok(true)
+                    : Result<bool>.Fail("No se pudo inhabilitar el insumo.");
+            }
+            catch (Exception ex)
+            {
+                return Result<bool>.Fail("Error al inhabilitar insumo: " + ex.Message);
+            }
+        }
     }
-
 }
-
-

@@ -1,106 +1,81 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.SqlClient;
 using CapaEntidad;
 
 namespace CapaDatos
 {
-    public class datCompraReq
+    public class datCompraReq : IdatCompraReq
     {
-        #region Singleton
         private static readonly datCompraReq _instance = new datCompraReq();
-        public static datCompraReq Instancia
-        {
-            get { return datCompraReq._instance; }
-        }
-        #endregion Singleton
-
-        #region Metodos
+        public static datCompraReq Instancia { get { return _instance; } }
 
         public List<entCompraReq> ListarCompraReq()
         {
-            SqlCommand cmd = null;
             List<entCompraReq> lista = new List<entCompraReq>();
-            try
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spListarCompraReq", cn))
             {
-                SqlConnection cn = Conexion.Instancia.Conectar(); //singleton
-                cmd = new SqlCommand("spListarCompraReq", cn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cn.Open();
-                SqlDataReader dr = cmd.ExecuteReader();
-                while (dr.Read())
+                using (SqlDataReader dr = cmd.ExecuteReader())
                 {
-                    entCompraReq cr = new entCompraReq();
-                    cr.IdCompra = Convert.ToInt32(dr["ComprainsumosID"]);
-                    cr.Encargado = dr["Encargado"].ToString();
-                    cr.FechaCompra = Convert.ToDateTime(dr["FechaCompra"].ToString());
-                    cr.MetodoPago = dr["MetodoPago"].ToString();
-                    cr.MontoTotal = Convert.ToDecimal(dr["MontoTotal"]);
-                    cr.IDRequerimiento = Convert.ToInt32(dr["RequerimientoDeInsumoID"]);
-                    cr.IDProveedor = Convert.ToInt32(dr["ProveedorID"]);
-                    cr.EstadoCompra = Convert.ToBoolean(dr["EstadoCompra"]);
-                    lista.Add(cr);
+                    while (dr.Read())
+                    {
+                        lista.Add(new entCompraReq
+                        {
+                            IdCompra = Convert.ToInt32(dr["ComprainsumosID"]),
+                            Encargado = dr["Encargado"].ToString(),
+                            FechaCompra = Convert.ToDateTime(dr["FechaCompra"]),
+                            MetodoPago = dr["MetodoPago"].ToString(),
+                            MontoTotal = Convert.ToDecimal(dr["MontoTotal"]),
+                            IDRequerimiento = Convert.ToInt32(dr["RequerimientoDeInsumoID"]),
+                            IDProveedor = Convert.ToInt32(dr["ProveedorID"]),
+                            EstadoCompra = Convert.ToBoolean(dr["EstadoCompra"])
+                        });
+                    }
                 }
             }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
             return lista;
         }
-        public Boolean registrarCompraReq(entCompraReq cr)
+
+        public int registrarCompraReq(entCompraReq cr)
         {
-            SqlCommand cmd = null;
-            Boolean registrar = false;
-            try
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
             {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("SpRegistrarCompraReq", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("IdCompra", cr.IdCompra);
-                cmd.Parameters.AddWithValue("@Encargado", cr.Encargado);
-                cmd.Parameters.AddWithValue("@FechaCompra", cr.FechaCompra);
-                cmd.Parameters.AddWithValue("@MetodoPago", cr.MetodoPago);
-                cmd.Parameters.AddWithValue("@MontoTotal", cr.MontoTotal);
-                cmd.Parameters.AddWithValue("@EstadoCompra", cr.EstadoCompra);
-                cmd.Parameters.AddWithValue("@IDRequerimiento", cr.IDRequerimiento);
-                cmd.Parameters.AddWithValue("@IDProveedor", cr.IDProveedor);
                 cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
+                using (SqlCommand cmdMax = new SqlCommand("SELECT ISNULL(MAX(ComprainsumosID), 0) + 1 FROM Comprainsumos", cn))
                 {
-                    registrar = true;
+                    cr.IdCompra = (int)cmdMax.ExecuteScalar();
+                }
+                using (SqlCommand cmd = new SqlCommand("spRegistrarCompraReq", cn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@ComprainsumosID", cr.IdCompra);
+                    cmd.Parameters.AddWithValue("@Encargado", cr.Encargado);
+                    cmd.Parameters.AddWithValue("@FechaCompra", cr.FechaCompra);
+                    cmd.Parameters.AddWithValue("@MetodoPago", cr.MetodoPago);
+                    cmd.Parameters.AddWithValue("@MontoTotal", cr.MontoTotal);
+                    cmd.Parameters.AddWithValue("@EstadoCompra", cr.EstadoCompra);
+                    cmd.Parameters.AddWithValue("@RequerimientoDeInsumoID", cr.IDRequerimiento);
+                    cmd.Parameters.AddWithValue("@ProveedorID", cr.IDProveedor);
+                    cmd.ExecuteNonQuery();
                 }
             }
-            catch (Exception e) { throw e; }
-            finally { if (cmd != null) cmd.Connection.Close(); }
-            return registrar;
+            return cr.IdCompra;
         }
-        public Boolean anularCompraReq(entCompraReq cr)
+
+        public bool anularCompraReq(int idCompra)
         {
-            SqlCommand cmd = null;
-            Boolean anular = false;
-            try
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spAnularCompraReq", cn))
             {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("spAnularCompraReq", cn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@IdCompra", cr.IdCompra);
+                cmd.Parameters.AddWithValue("@ComprainsumosID", idCompra);
                 cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
-                {
-                    anular = true;
-                }
+                return cmd.ExecuteNonQuery() > 0;
             }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
-            return anular;
         }
-
-        #endregion Metodos
-
     }
 }

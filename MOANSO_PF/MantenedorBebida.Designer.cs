@@ -32,6 +32,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.gbBebida = new System.Windows.Forms.GroupBox();
+            this.txtIdBebida = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.txtPrecioBebida = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.cbTBebida = new System.Windows.Forms.ComboBox();
@@ -45,8 +47,6 @@
             this.btnConfirmar = new System.Windows.Forms.Button();
             this.btnCancelar = new System.Windows.Forms.Button();
             this.btnRegresar = new System.Windows.Forms.Button();
-            this.txtIdBebida = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.btnNuevo = new System.Windows.Forms.Button();
             this.btnDatos = new System.Windows.Forms.Button();
             this.gbBebida.SuspendLayout();
@@ -56,27 +56,27 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(41, 67);
+            this.label2.Location = new System.Drawing.Point(26, 63);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(67, 13);
+            this.label2.Size = new System.Drawing.Size(93, 20);
             this.label2.TabIndex = 1;
             this.label2.Text = "Tipo Bebida:";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(41, 118);
+            this.label3.Location = new System.Drawing.Point(20, 113);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(83, 13);
+            this.label3.Size = new System.Drawing.Size(118, 20);
             this.label3.TabIndex = 2;
             this.label3.Text = "Nombre Bebida:";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(41, 158);
+            this.label4.Location = new System.Drawing.Point(20, 148);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(49, 13);
+            this.label4.Size = new System.Drawing.Size(64, 20);
             this.label4.TabIndex = 3;
             this.label4.Text = "Tamaño:";
             // 
@@ -100,52 +100,70 @@
             this.gbBebida.TabStop = false;
             this.gbBebida.Text = "Datos de Bebida";
             // 
+            // txtIdBebida
+            // 
+            this.txtIdBebida.Location = new System.Drawing.Point(141, 27);
+            this.txtIdBebida.Name = "txtIdBebida";
+            this.txtIdBebida.Size = new System.Drawing.Size(100, 27);
+            this.txtIdBebida.TabIndex = 13;
+            this.txtIdBebida.Visible = false;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(26, 32);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(78, 20);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "ID Bebida:";
+            this.label1.Visible = false;
+            // 
             // txtPrecioBebida
             // 
-            this.txtPrecioBebida.Location = new System.Drawing.Point(87, 195);
+            this.txtPrecioBebida.Location = new System.Drawing.Point(141, 178);
             this.txtPrecioBebida.Name = "txtPrecioBebida";
-            this.txtPrecioBebida.Size = new System.Drawing.Size(100, 20);
+            this.txtPrecioBebida.Size = new System.Drawing.Size(100, 27);
             this.txtPrecioBebida.TabIndex = 11;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(41, 202);
+            this.label5.Location = new System.Drawing.Point(20, 183);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(40, 13);
+            this.label5.Size = new System.Drawing.Size(53, 20);
             this.label5.TabIndex = 10;
             this.label5.Text = "Precio:";
             // 
             // cbTBebida
             // 
             this.cbTBebida.FormattingEnabled = true;
-            this.cbTBebida.Location = new System.Drawing.Point(114, 59);
+            this.cbTBebida.Location = new System.Drawing.Point(141, 60);
             this.cbTBebida.Name = "cbTBebida";
-            this.cbTBebida.Size = new System.Drawing.Size(121, 21);
+            this.cbTBebida.Size = new System.Drawing.Size(121, 28);
             this.cbTBebida.TabIndex = 9;
             // 
             // chbEstadoBebida
             // 
             this.chbEstadoBebida.AutoSize = true;
-            this.chbEstadoBebida.Location = new System.Drawing.Point(116, 226);
+            this.chbEstadoBebida.Location = new System.Drawing.Point(23, 219);
             this.chbEstadoBebida.Name = "chbEstadoBebida";
-            this.chbEstadoBebida.Size = new System.Drawing.Size(59, 17);
+            this.chbEstadoBebida.Size = new System.Drawing.Size(76, 24);
             this.chbEstadoBebida.TabIndex = 8;
             this.chbEstadoBebida.Text = "Estado";
             this.chbEstadoBebida.UseVisualStyleBackColor = true;
             // 
             // txtTamBebida
             // 
-            this.txtTamBebida.Location = new System.Drawing.Point(85, 151);
+            this.txtTamBebida.Location = new System.Drawing.Point(141, 145);
             this.txtTamBebida.Name = "txtTamBebida";
-            this.txtTamBebida.Size = new System.Drawing.Size(100, 20);
+            this.txtTamBebida.Size = new System.Drawing.Size(100, 27);
             this.txtTamBebida.TabIndex = 7;
             // 
             // txtNombreBebida
             // 
-            this.txtNombreBebida.Location = new System.Drawing.Point(130, 111);
+            this.txtNombreBebida.Location = new System.Drawing.Point(141, 106);
             this.txtNombreBebida.Name = "txtNombreBebida";
-            this.txtNombreBebida.Size = new System.Drawing.Size(100, 20);
+            this.txtNombreBebida.Size = new System.Drawing.Size(100, 27);
             this.txtNombreBebida.TabIndex = 6;
             // 
             // dgvBebida
@@ -153,6 +171,7 @@
             this.dgvBebida.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvBebida.Location = new System.Drawing.Point(381, 42);
             this.dgvBebida.Name = "dgvBebida";
+            this.dgvBebida.RowHeadersWidth = 51;
             this.dgvBebida.Size = new System.Drawing.Size(328, 202);
             this.dgvBebida.TabIndex = 5;
             this.dgvBebida.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvBebida_CellContentClick);
@@ -171,7 +190,7 @@
             // 
             this.btnModificarBebida.Location = new System.Drawing.Point(202, 320);
             this.btnModificarBebida.Name = "btnModificarBebida";
-            this.btnModificarBebida.Size = new System.Drawing.Size(75, 23);
+            this.btnModificarBebida.Size = new System.Drawing.Size(85, 33);
             this.btnModificarBebida.TabIndex = 14;
             this.btnModificarBebida.Text = "Modificar";
             this.btnModificarBebida.UseVisualStyleBackColor = true;
@@ -179,9 +198,9 @@
             // 
             // btnAgregarBebida
             // 
-            this.btnAgregarBebida.Location = new System.Drawing.Point(79, 320);
+            this.btnAgregarBebida.Location = new System.Drawing.Point(70, 308);
             this.btnAgregarBebida.Name = "btnAgregarBebida";
-            this.btnAgregarBebida.Size = new System.Drawing.Size(75, 23);
+            this.btnAgregarBebida.Size = new System.Drawing.Size(75, 33);
             this.btnAgregarBebida.TabIndex = 13;
             this.btnAgregarBebida.Text = "Agregar";
             this.btnAgregarBebida.UseVisualStyleBackColor = true;
@@ -189,52 +208,37 @@
             // 
             // btnConfirmar
             // 
-            this.btnConfirmar.Location = new System.Drawing.Point(634, 403);
+            this.btnConfirmar.Location = new System.Drawing.Point(691, 478);
             this.btnConfirmar.Name = "btnConfirmar";
-            this.btnConfirmar.Size = new System.Drawing.Size(75, 23);
+            this.btnConfirmar.Size = new System.Drawing.Size(87, 34);
             this.btnConfirmar.TabIndex = 18;
             this.btnConfirmar.Text = "Confirmar";
             this.btnConfirmar.UseVisualStyleBackColor = true;
             // 
             // btnCancelar
             // 
-            this.btnCancelar.Location = new System.Drawing.Point(508, 403);
+            this.btnCancelar.Location = new System.Drawing.Point(569, 481);
             this.btnCancelar.Name = "btnCancelar";
-            this.btnCancelar.Size = new System.Drawing.Size(75, 23);
+            this.btnCancelar.Size = new System.Drawing.Size(75, 31);
             this.btnCancelar.TabIndex = 17;
             this.btnCancelar.Text = "Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = true;
             // 
             // btnRegresar
             // 
-            this.btnRegresar.Location = new System.Drawing.Point(23, 403);
+            this.btnRegresar.Location = new System.Drawing.Point(12, 478);
             this.btnRegresar.Name = "btnRegresar";
-            this.btnRegresar.Size = new System.Drawing.Size(75, 23);
+            this.btnRegresar.Size = new System.Drawing.Size(75, 34);
             this.btnRegresar.TabIndex = 16;
             this.btnRegresar.Text = "Regresar";
             this.btnRegresar.UseVisualStyleBackColor = true;
-            // 
-            // txtIdBebida
-            // 
-            this.txtIdBebida.Location = new System.Drawing.Point(104, 26);
-            this.txtIdBebida.Name = "txtIdBebida";
-            this.txtIdBebida.Size = new System.Drawing.Size(100, 20);
-            this.txtIdBebida.TabIndex = 13;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(41, 33);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(57, 13);
-            this.label1.TabIndex = 12;
-            this.label1.Text = "ID Bebida:";
+            this.btnRegresar.Click += new System.EventHandler(this.btnRegresar_Click);
             // 
             // btnNuevo
             // 
-            this.btnNuevo.Location = new System.Drawing.Point(381, 254);
+            this.btnNuevo.Location = new System.Drawing.Point(428, 254);
             this.btnNuevo.Name = "btnNuevo";
-            this.btnNuevo.Size = new System.Drawing.Size(75, 23);
+            this.btnNuevo.Size = new System.Drawing.Size(75, 39);
             this.btnNuevo.TabIndex = 27;
             this.btnNuevo.Text = "Nuevo";
             this.btnNuevo.UseVisualStyleBackColor = true;
@@ -242,9 +246,9 @@
             // 
             // btnDatos
             // 
-            this.btnDatos.Location = new System.Drawing.Point(529, 254);
+            this.btnDatos.Location = new System.Drawing.Point(557, 254);
             this.btnDatos.Name = "btnDatos";
-            this.btnDatos.Size = new System.Drawing.Size(75, 23);
+            this.btnDatos.Size = new System.Drawing.Size(87, 39);
             this.btnDatos.TabIndex = 26;
             this.btnDatos.Text = "Editar Datos";
             this.btnDatos.UseVisualStyleBackColor = true;
@@ -252,9 +256,10 @@
             // 
             // MantenedorBebida
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(752, 450);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(237)))), ((int)(((byte)(214)))));
+            this.ClientSize = new System.Drawing.Size(790, 524);
             this.Controls.Add(this.btnNuevo);
             this.Controls.Add(this.btnDatos);
             this.Controls.Add(this.btnConfirmar);
@@ -265,8 +270,10 @@
             this.Controls.Add(this.btnAgregarBebida);
             this.Controls.Add(this.dgvBebida);
             this.Controls.Add(this.gbBebida);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.Name = "MantenedorBebida";
-            this.Text = "MantenedorBebida";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Bebidas";
             this.gbBebida.ResumeLayout(false);
             this.gbBebida.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvBebida)).EndInit();

@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CapaEntidad;
 using CapaLogica;
@@ -14,6 +7,8 @@ namespace MOANSO_PF
 {
     public partial class MantenedorPlatillo : Form
     {
+        private int _platilloID = 0;
+
         public MantenedorPlatillo()
         {
             InitializeComponent();
@@ -21,36 +16,49 @@ namespace MOANSO_PF
             listarPlatillo();
             llenarDatosCBTPlatillo();
         }
-        public void listarPlatillo() { 
+
+        public void listarPlatillo()
+        {
             dgvPlatillo.DataSource = logPlatillo.Instancia.ListarPlatillo();
         }
-        public void limpiarVariables(){
-            txtIdPlatillo.Text = "";
+
+        public void limpiarVariables()
+        {
             txtNombrePlatillo.Text = "";
             txtPrecioPlatillo.Text = "";
+            chbEstadoPlatillo.Checked = true;
+            _platilloID = 0;
         }
+
         public void llenarDatosCBTPlatillo()
         {
             cbTPlatillo.DataSource = logTPlatillo.Instancia.ListarTPlatillo();
             cbTPlatillo.DisplayMember = "NombreTipo";
             cbTPlatillo.ValueMember = "IdTipoPlatillo";
         }
+
         private void btnAgregarPlatillo_Click(object sender, EventArgs e)
         {
-            try
+            if (!decimal.TryParse(txtPrecioPlatillo.Text.Trim(), out decimal precio))
             {
-                entPlatillo pl = new entPlatillo();
-                pl.IdPlatillo = int.Parse(txtIdPlatillo.Text.Trim());
-                pl.NombrePlatillo = txtNombrePlatillo.Text.Trim();
-                pl.PrecioPlatillo = decimal.Parse(txtPrecioPlatillo.Text.Trim());
-                pl.EstadoPlatillo = chbEstadoPlatillo.Checked;
-                pl.IdTipoPlatillo = Convert.ToInt32(cbTPlatillo.SelectedValue);
-                logPlatillo.Instancia.InsertarPlatillo(pl);
+                MessageBox.Show("Precio debe ser un valor numérico válido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception exc)
+
+            entPlatillo pl = new entPlatillo
             {
-                MessageBox.Show("Error..." + exc);
-            }
+                NombrePlatillo = txtNombrePlatillo.Text.Trim(),
+                PrecioPlatillo = precio,
+                EstadoPlatillo = chbEstadoPlatillo.Checked,
+                IdTipoPlatillo = Convert.ToInt32(cbTPlatillo.SelectedValue)
+            };
+
+            var result = logPlatillo.Instancia.InsertarPlatillo(pl);
+            if (result.Success)
+                MessageBox.Show("Platillo registrado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             gbDatosPlatillo.Enabled = false;
             listarPlatillo();
@@ -58,19 +66,32 @@ namespace MOANSO_PF
 
         private void btnModificarPlatillo_Click(object sender, EventArgs e)
         {
-            try
+            if (_platilloID == 0)
             {
-                entPlatillo pl = new entPlatillo();
-                pl.IdPlatillo = int.Parse(txtIdPlatillo.Text.Trim());
-                pl.NombrePlatillo = txtNombrePlatillo.Text.Trim();
-                pl.PrecioPlatillo = decimal.Parse(txtPrecioPlatillo.Text.Trim());
-                pl.EstadoPlatillo = chbEstadoPlatillo.Checked;
-                logPlatillo.Instancia.ModificarPlatillo(pl);
+                MessageBox.Show("Seleccione un platillo de la lista.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception exc)
+
+            if (!decimal.TryParse(txtPrecioPlatillo.Text.Trim(), out decimal precio))
             {
-                MessageBox.Show("Error..." + exc);
+                MessageBox.Show("Precio debe ser un valor numérico válido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
+
+            entPlatillo pl = new entPlatillo
+            {
+                IdPlatillo = _platilloID,
+                NombrePlatillo = txtNombrePlatillo.Text.Trim(),
+                PrecioPlatillo = precio,
+                EstadoPlatillo = chbEstadoPlatillo.Checked
+            };
+
+            var result = logPlatillo.Instancia.EditarPlatillo(pl);
+            if (result.Success)
+                MessageBox.Show("Platillo modificado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             gbDatosPlatillo.Enabled = false;
             listarPlatillo();
@@ -78,17 +99,18 @@ namespace MOANSO_PF
 
         private void btnInhabilitarPlatillo_Click(object sender, EventArgs e)
         {
-            try
+            if (_platilloID == 0)
             {
-                entPlatillo pl = new entPlatillo();
-                pl.IdPlatillo = int.Parse(txtIdPlatillo.Text.Trim());
-                chbEstadoPlatillo.Checked = false;
-                logPlatillo.Instancia.InsertarPlatillo(pl);
+                MessageBox.Show("Seleccione un platillo de la lista.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception exc)
-            {
-                MessageBox.Show("Error..." + exc);
-            }
+
+            var result = logPlatillo.Instancia.DeshabilitarPlatillo(_platilloID);
+            if (result.Success)
+                MessageBox.Show("Platillo deshabilitado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             gbDatosPlatillo.Enabled = false;
             listarPlatillo();
@@ -96,8 +118,9 @@ namespace MOANSO_PF
 
         private void dgvPlatillo_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0) return;
             DataGridViewRow filaActual = dgvPlatillo.Rows[e.RowIndex];
-            txtIdPlatillo.Text = filaActual.Cells[0].Value.ToString();
+            _platilloID = Convert.ToInt32(filaActual.Cells[0].Value);
             txtNombrePlatillo.Text = filaActual.Cells[1].Value.ToString();
             txtPrecioPlatillo.Text = filaActual.Cells[2].Value.ToString();
             chbEstadoPlatillo.Checked = Convert.ToBoolean(filaActual.Cells[3].Value);
@@ -108,14 +131,19 @@ namespace MOANSO_PF
             gbDatosPlatillo.Enabled = true;
             btnModificarPlatillo.Enabled = false;
             btnAgregarPlatillo.Enabled = true;
+            limpiarVariables();
         }
 
         private void btnDatosPlatillo_Click(object sender, EventArgs e)
         {
             gbDatosPlatillo.Enabled = true;
             btnAgregarPlatillo.Enabled = false;
-            limpiarVariables();
             btnModificarPlatillo.Enabled = true;
+        }
+
+        private void btnRegresar_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

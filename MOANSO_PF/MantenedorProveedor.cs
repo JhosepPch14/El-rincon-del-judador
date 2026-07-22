@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CapaEntidad;
 using CapaLogica;
@@ -14,37 +7,47 @@ namespace MOANSO_PF
 {
     public partial class MantenedorProveedor : Form
     {
+        private int _proveedorID = 0;
+
         public MantenedorProveedor()
         {
             InitializeComponent();
             gbProveedor.Enabled = false;
             listarProveedor();
         }
-        public void listarProveedor() {
+
+        public void listarProveedor()
+        {
             dgvProveedor.DataSource = logProveedor.Instancia.ListarProveedor();
         }
-        public void limpiarVariables() {
-            txtIdProveedor.Text = "";
+
+        public void limpiarVariables()
+        {
             txtNombreProveedor.Text = "";
             txtRucProveedor.Text = "";
             txtCorreoProveedor.Text = "";
+            dtpFRegistro.Value = DateTime.Now;
+            chbEstadoProveedor.Checked = true;
+            _proveedorID = 0;
         }
 
         private void btnAgregarProveedor_Click(object sender, EventArgs e)
         {
-            try { 
-                entProveedor p = new entProveedor();
-                p.IdProveedor = int.Parse(txtIdProveedor.Text);
-                p.NombreProveedor = txtNombreProveedor.Text.Trim();
-                p.RUC = txtRucProveedor.Text.Trim();
-                p.EmailProveedor = txtCorreoProveedor.Text.Trim();
-                p.FechaRProveedor = dtpFRegistro.Value;
-                p.EstadoProveedor = chbEstadoProveedor.Checked;
-                logProveedor.Instancia.InsertarProveedor(p);
-            }
-            catch (Exception exc) {
-                MessageBox.Show("Error..." + exc);
-            }
+            entProveedor p = new entProveedor
+            {
+                NombreProveedor = txtNombreProveedor.Text.Trim(),
+                RUC = txtRucProveedor.Text.Trim(),
+                EmailProveedor = txtCorreoProveedor.Text.Trim(),
+                FechaRProveedor = dtpFRegistro.Value,
+                EstadoProveedor = chbEstadoProveedor.Checked
+            };
+
+            var result = logProveedor.Instancia.InsertarProveedor(p);
+            if (result.Success)
+                MessageBox.Show("Proveedor registrado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             gbProveedor.Enabled = false;
             listarProveedor();
@@ -52,21 +55,28 @@ namespace MOANSO_PF
 
         private void btnModificarProveedor_Click(object sender, EventArgs e)
         {
-            try
+            if (_proveedorID == 0)
             {
-                entProveedor p = new entProveedor();
-                p.IdProveedor = int.Parse(txtIdProveedor.Text.Trim());
-                p.NombreProveedor = txtNombreProveedor.Text.Trim();
-                p.RUC = txtRucProveedor.Text.Trim();
-                p.EmailProveedor = txtCorreoProveedor.Text.Trim();
-                p.FechaRProveedor = dtpFRegistro.Value;
-                p.EstadoProveedor = chbEstadoProveedor.Checked;
-                logProveedor.Instancia.ModificarProveedor(p);
+                MessageBox.Show("Seleccione un proveedor de la lista.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception exc)
+
+            entProveedor p = new entProveedor
             {
-                MessageBox.Show("Error..." + exc);
-            }
+                IdProveedor = _proveedorID,
+                NombreProveedor = txtNombreProveedor.Text.Trim(),
+                RUC = txtRucProveedor.Text.Trim(),
+                EmailProveedor = txtCorreoProveedor.Text.Trim(),
+                FechaRProveedor = dtpFRegistro.Value,
+                EstadoProveedor = chbEstadoProveedor.Checked
+            };
+
+            var result = logProveedor.Instancia.EditarProveedor(p);
+            if (result.Success)
+                MessageBox.Show("Proveedor modificado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             gbProveedor.Enabled = false;
             listarProveedor();
@@ -74,17 +84,18 @@ namespace MOANSO_PF
 
         private void btnInhabilitarProveedor_Click(object sender, EventArgs e)
         {
-            try
+            if (_proveedorID == 0)
             {
-                entProveedor p = new entProveedor();
-                p.IdProveedor = int.Parse(txtIdProveedor.Text.Trim());
-                chbEstadoProveedor.Checked = false;
-                logProveedor.Instancia.InsertarProveedor(p);
+                MessageBox.Show("Seleccione un proveedor de la lista.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception exc)
-            {
-                MessageBox.Show("Error..." + exc);
-            }
+
+            var result = logProveedor.Instancia.DeshabilitarProveedor(_proveedorID);
+            if (result.Success)
+                MessageBox.Show("Proveedor deshabilitado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             gbProveedor.Enabled = false;
             listarProveedor();
@@ -92,12 +103,13 @@ namespace MOANSO_PF
 
         private void dgvProveedor_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0) return;
             DataGridViewRow filaActual = dgvProveedor.Rows[e.RowIndex];
-            txtIdProveedor.Text = filaActual.Cells[0].Value.ToString();
+            _proveedorID = Convert.ToInt32(filaActual.Cells[0].Value);
             txtNombreProveedor.Text = filaActual.Cells[1].Value.ToString();
             txtRucProveedor.Text = filaActual.Cells[2].Value.ToString();
             txtCorreoProveedor.Text = filaActual.Cells[3].Value.ToString();
-            dtpFRegistro.Text = filaActual.Cells[4].Value.ToString();
+            dtpFRegistro.Value = Convert.ToDateTime(filaActual.Cells[4].Value);
             chbEstadoProveedor.Checked = Convert.ToBoolean(filaActual.Cells[5].Value);
         }
 
@@ -106,7 +118,7 @@ namespace MOANSO_PF
             gbProveedor.Enabled = true;
             btnAgregarProveedor.Enabled = true;
             limpiarVariables();
-            btnModificarProveedor.Enabled = true;
+            btnModificarProveedor.Enabled = false;
         }
 
         private void btnDatos_Click(object sender, EventArgs e)
@@ -114,6 +126,11 @@ namespace MOANSO_PF
             gbProveedor.Enabled = true;
             btnModificarProveedor.Enabled = true;
             btnAgregarProveedor.Enabled = false;
+        }
+
+        private void btnRegresar_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

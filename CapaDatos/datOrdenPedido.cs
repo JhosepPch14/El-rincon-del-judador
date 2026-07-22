@@ -1,136 +1,107 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.SqlClient;
 using CapaEntidad;
 
 namespace CapaDatos
 {
-    public class datOrdenPedido
+    public class datOrdenPedido : IdatOrdenPedido
     {
-        #region Singleton
         private static readonly datOrdenPedido _instance = new datOrdenPedido();
-        public static datOrdenPedido Instancia
-        {
-            get { return datOrdenPedido._instance; }
-        }
-        #endregion Singleton
+        public static datOrdenPedido Instancia { get { return _instance; } }
 
-        #region Metodos
         public List<entOrdenPedido> ListarOrden()
         {
-            SqlCommand cmd = null;
             List<entOrdenPedido> lista = new List<entOrdenPedido>();
-            try
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spListarOrdenPedido", cn))
             {
-                SqlConnection cn = Conexion.Instancia.Conectar(); //singleton
-                cmd = new SqlCommand("spListarOrdenPedido", cn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cn.Open();
-                SqlDataReader dr = cmd.ExecuteReader();
-                while (dr.Read())
+                using (SqlDataReader dr = cmd.ExecuteReader())
                 {
-                    entOrdenPedido op = new entOrdenPedido
+                    while (dr.Read())
                     {
-                        PedidoID = Convert.ToInt32(dr["OrdenpedidoID"]),
-                        Fecha = Convert.ToDateTime(dr["Fecha"]),
-                        NroMesa = Convert.ToInt32(dr["NroMesa"]),
-                        Total = Convert.ToInt32(dr["Total"]),
-                        EstadoPedido = Convert.ToBoolean(dr["Estado"]),
-                        NombreMesero = dr["Nombre_Mesero"].ToString(),
-                        MeseroID = Convert.ToInt32(dr["MeseroID"])
-                    };
-                    lista.Add(op);
+                        lista.Add(new entOrdenPedido
+                        {
+                            PedidoID = Convert.ToInt32(dr["OrdenpedidoID"]),
+                            Fecha = Convert.ToDateTime(dr["Fecha"]),
+                            NroMesa = Convert.ToInt32(dr["NroMesa"]),
+                            Total = Convert.ToDecimal(dr["Total"]),
+                            EstadoPedido = Convert.ToBoolean(dr["Estado"]),
+                            NombreMesero = dr["Nombre_Mesero"].ToString(),
+                            MeseroID = Convert.ToInt32(dr["MeseroID"])
+                        });
+                    }
                 }
             }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
             return lista;
         }
 
-        public Boolean agregarOrden(entOrdenPedido op) {
-            SqlCommand cmd = null;
-            Boolean agregar = false;
-            try{
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("spAgregarOrdenPedido", cn);
+        public int agregarOrden(entOrdenPedido op)
+        {
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            {
+                cn.Open();
+                using (SqlCommand cmdMax = new SqlCommand("SELECT ISNULL(MAX(OrdenpedidoID), 0) + 1 FROM Ordenpedido", cn))
+                {
+                    op.PedidoID = (int)cmdMax.ExecuteScalar();
+                }
+                using (SqlCommand cmd = new SqlCommand("spAgregarOrdenPedido", cn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@OrdenpedidoID", op.PedidoID);
+                    cmd.Parameters.AddWithValue("@Fecha", op.Fecha);
+                    cmd.Parameters.AddWithValue("@NroMesa", op.NroMesa);
+                    cmd.Parameters.AddWithValue("@Total", op.Total);
+                    cmd.Parameters.AddWithValue("@Estado", op.EstadoPedido);
+                    cmd.Parameters.AddWithValue("@MeseroID", op.MeseroID);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            return op.PedidoID;
+        }
+
+        public bool modificarOrden(entOrdenPedido op)
+        {
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spModificarOrden", cn))
+            {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@OrdenpedidoID", op.PedidoID);
-                cmd.Parameters.AddWithValue("@Fecha", op.Fecha);
                 cmd.Parameters.AddWithValue("@NroMesa", op.NroMesa);
                 cmd.Parameters.AddWithValue("@Total", op.Total);
                 cmd.Parameters.AddWithValue("@Estado", op.EstadoPedido);
                 cmd.Parameters.AddWithValue("@MeseroID", op.MeseroID);
                 cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
-                {
-                    agregar = true;
-                }
+                return cmd.ExecuteNonQuery() > 0;
             }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
-            return agregar;
         }
-        public Boolean modificarOrden(entOrdenPedido op) {
-            SqlCommand cmd = null;
-            Boolean modificar = false;
-            try{
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("SpIModificarOrden", cn);
+
+        public bool inhabilitarOrden(int pedidoID)
+        {
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spDeshabilitarOrdenPedido", cn))
+            {
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@OrdenpedidoID", op.PedidoID);
-                cmd.Parameters.AddWithValue("@NroMesa", op.NroMesa);
-                cmd.Parameters.AddWithValue("@Total", op.Total);
-                cmd.Parameters.AddWithValue("@Estado", op.EstadoPedido);
-                cmd.Parameters.AddWithValue("@MeseroID", op.MeseroID);
+                cmd.Parameters.AddWithValue("@OrdenpedidoID", pedidoID);
                 cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
-                {
-                    modificar = true;
-                }
+                return cmd.ExecuteNonQuery() > 0;
             }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
-            return modificar;
         }
-        public Boolean inhabilitarOrden(entOrdenPedido op) {
-            SqlCommand cmd = null;
-            Boolean inhabilitar = false;
-            try{
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("spDeshabilitarOrdenPedido", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@OrdenpedidoID", op.PedidoID);
-                cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
-                {
-                    inhabilitar = true;
-                }
-            }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
-            return inhabilitar;
-        }
+
         public bool actualizarTotal(int pedidoID, decimal total)
         {
-            SqlCommand cmd = new SqlCommand("UPDATE Ordenpedido SET Total = @Total WHERE OrdenpedidoID = @PedidoID", Conexion.Instancia.Conectar());
-            cmd.Parameters.AddWithValue("@PedidoID", pedidoID);
-            cmd.Parameters.AddWithValue("@Total", total);
-
-            cmd.Connection.Open();
-            int i = cmd.ExecuteNonQuery();
-            cmd.Connection.Close();
-
-            return i > 0;
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spActualizarTotalOrden", cn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@PedidoID", pedidoID);
+                cmd.Parameters.AddWithValue("@Total", total);
+                cn.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
         }
-
-
-        #endregion Metodos
     }
 }

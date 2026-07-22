@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CapaEntidad;
 using CapaLogica;
@@ -14,160 +8,172 @@ namespace MOANSO_PF
 {
     public partial class RequerimientoInsumos : Form
     {
+        private readonly List<entDetalleReq> listaDetalles = new List<entDetalleReq>();
+        private int _requerimientoID = 0;
+        private int _detalleSeleccionado = -1;
+
         public RequerimientoInsumos()
         {
             InitializeComponent();
             listarReqInsumos();
             llenarDatosCB();
         }
-        private List<entDetalleReq> listaDetalles = new List<entDetalleReq>();
-        public void listarReqInsumos() { 
+
+        public void listarReqInsumos()
+        {
             dgvReqInsum.DataSource = logReqInsumos.Instancia.ListarReqInsumos();
         }
-        public void listarDetalleReq(int requerimientoID) {
+
+        public void listarDetalleReq(int requerimientoID)
+        {
             dgvDetalleReq.DataSource = logDetalleReq.Instancia.ListarDetallesReq(requerimientoID);
         }
-        public void llenarDatosCB() {
-            cbInsumos.DataSource = LogInsumos.Instancia.ListarInsumos();
+
+        public void llenarDatosCB()
+        {
+            cbInsumos.DataSource = logInsumos.Instancia.ListarInsumos();
             cbInsumos.DisplayMember = "NombreInsumo";
             cbInsumos.ValueMember = "IdInsumo";
 
             cbEnAlmacen.DataSource = logEnAlmacen.Instancia.ListarEnAlmacen();
             cbEnAlmacen.DisplayMember = "Nombre";
             cbEnAlmacen.ValueMember = "IDEnAlmacen";
-
         }
+
         private void limpiarVariables()
         {
-            txtIDRequerimiento.Text = "";
             txtCantidad.Text = "";
+            _detalleSeleccionado = -1;
         }
+
         private void btnRegistrar_Click(object sender, EventArgs e)
         {
-            try { 
-            entReqInsumos ri = new entReqInsumos();
-                ri.IDRequerimiento = int.Parse(txtIDRequerimiento.Text.Trim());
-                ri.FechaRegistro = dtpFRegistro.Value;
-                ri.Estado = chbEstadoReq.Checked;
-                ri.IDEncargado = Convert.ToInt32(cbEnAlmacen.SelectedValue);
-                logReqInsumos.Instancia.registrarReq(ri);
-            }
-            catch (Exception exc)
+            entReqInsumos ri = new entReqInsumos
             {
-                MessageBox.Show("Error..." + exc);
+                FechaRegistro = dtpFRegistro.Value,
+                Estado = chbEstadoReq.Checked,
+                IDEncargado = Convert.ToInt32(cbEnAlmacen.SelectedValue)
+            };
+
+            var result = logReqInsumos.Instancia.registrarReq(ri);
+            if (result.Success)
+            {
+                _requerimientoID = result.Data;
+                MessageBox.Show("Requerimiento registrado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             listarReqInsumos();
         }
 
         private void btnAnular_Click(object sender, EventArgs e)
         {
-            try
+            if (_requerimientoID == 0)
             {
-                entReqInsumos ri = new entReqInsumos();
-                ri.IDRequerimiento = int.Parse(txtIDRequerimiento.Text.Trim());
-                chbEstadoReq.Checked = false;
-                logReqInsumos.Instancia.anularReq(ri);
+                MessageBox.Show("Seleccione un requerimiento de la lista.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception exc)
-            {
-                MessageBox.Show("Error..." + exc);
-            }
+
+            var result = logReqInsumos.Instancia.anularReq(_requerimientoID);
+            if (result.Success)
+                MessageBox.Show("Requerimiento anulado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             listarReqInsumos();
         }
 
         private void btnAgregarDetalle_Click(object sender, EventArgs e)
         {
-            try {
-                int insumoID = Convert.ToInt32(cbInsumos.SelectedValue);
-                string nombreInsumo = cbInsumos.Text;
-                string cantidad = txtCantidad.Text;
-
-                entDetalleReq der = new entDetalleReq { 
-                    IDInsumo = insumoID,
-                    NombreInsumo = nombreInsumo,
-                    Cantidad = cantidad
-                };
-                listaDetalles.Add(der);
-
-                dgvDetalleReq.DataSource = null;
-                dgvDetalleReq.DataSource = listaDetalles;
-            }
-            catch (Exception exc)
+            if (!decimal.TryParse(txtCantidad.Text.Trim(), out decimal cantidad))
             {
-                MessageBox.Show("Error..." + exc);
+                MessageBox.Show("Cantidad debe ser un valor numérico válido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
 
+            int insumoID = Convert.ToInt32(cbInsumos.SelectedValue);
+            string nombreInsumo = cbInsumos.Text;
+
+            listaDetalles.Add(new entDetalleReq
+            {
+                IDInsumo = insumoID,
+                NombreInsumo = nombreInsumo,
+                Cantidad = cantidad
+            });
+
+            dgvDetalleReq.DataSource = null;
+            dgvDetalleReq.DataSource = listaDetalles;
         }
-        
+
         private void btnRDetalle_Click(object sender, EventArgs e)
         {
-            int requerimientoID = int.Parse(txtIDRequerimiento.Text);
-            List<entDetalleReq> list = new List<entDetalleReq>();
-
-            foreach (DataGridViewRow row in dgvDetalleReq.Rows) {
-                if (row.Cells["IdInsumo"].Value != null) {
-                    entDetalleReq der = new entDetalleReq
-                    {
-                        IDRequerimiento = requerimientoID,
-                        IDInsumo = Convert.ToInt32(row.Cells["IDInsumo"].Value),
-                        Cantidad = row.Cells["Cantidad"].Value.ToString()
-                    };
-                    list.Add(der);
-                }
-            }
-            if (logDetalleReq.Instancia.registrarDetalleReq(list, requerimientoID))
+            if (_requerimientoID == 0)
             {
-                MessageBox.Show("Compra registrada correctamente");
-                listarDetalleReq(requerimientoID);
+                MessageBox.Show("Primero registre el requerimiento antes de guardar los detalles.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (logDetalleReq.Instancia.registrarDetalleReq(listaDetalles, _requerimientoID))
+            {
+                MessageBox.Show("Detalles registrados correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                listarDetalleReq(_requerimientoID);
                 listarReqInsumos();
+                listaDetalles.Clear();
+            }
+            else
+            {
+                MessageBox.Show("No se pudieron registrar los detalles.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private int detalleSeleccionado = -1;
+
         private void dgvReqInsum_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0) return;
             DataGridViewRow filaActual = dgvReqInsum.Rows[e.RowIndex];
-            txtIDRequerimiento.Text = filaActual.Cells[0].Value.ToString();
+            _requerimientoID = Convert.ToInt32(filaActual.Cells[0].Value);
             chbEstadoReq.Checked = Convert.ToBoolean(filaActual.Cells[1].Value);
             dtpFRegistro.Value = Convert.ToDateTime(filaActual.Cells[2].Value);
 
-            int requerimientoID = Convert.ToInt32(filaActual.Cells[0].Value);
-            dgvDetalleReq.DataSource = logDetalleReq.Instancia.ListarDetallesReq(requerimientoID);
+            dgvDetalleReq.DataSource = logDetalleReq.Instancia.ListarDetallesReq(_requerimientoID);
         }
 
         private void dgvDetalleReq_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0) return;
             DataGridViewRow fila = dgvDetalleReq.Rows[e.RowIndex];
             cbInsumos.Text = fila.Cells["NombreInsumo"].Value.ToString();
             txtCantidad.Text = fila.Cells["Cantidad"].Value.ToString();
-            detalleSeleccionado = e.RowIndex;
+            _detalleSeleccionado = e.RowIndex;
         }
 
         private void btnEliminarDetalle_Click(object sender, EventArgs e)
         {
-            if (detalleSeleccionado >= 0 && detalleSeleccionado < listaDetalles.Count)
+            if (_detalleSeleccionado >= 0 && _detalleSeleccionado < listaDetalles.Count)
             {
                 var confirmar = MessageBox.Show("¿Desea eliminar este insumo?",
                     "Confirmar eliminación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (confirmar == DialogResult.Yes)
                 {
-                    listaDetalles.RemoveAt(detalleSeleccionado);
-
-                    // Actualizar el DataGridView
+                    listaDetalles.RemoveAt(_detalleSeleccionado);
                     dgvDetalleReq.DataSource = null;
                     dgvDetalleReq.DataSource = listaDetalles;
-
-                    // Limpiar selección
-                    detalleSeleccionado = -1;
+                    _detalleSeleccionado = -1;
                     dgvDetalleReq.ClearSelection();
                 }
             }
             else
             {
-                MessageBox.Show("Seleccione un insumo antes de eliminar.");
+                MessageBox.Show("Seleccione un insumo antes de eliminar.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+        }
+
+        private void btnRegresar_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

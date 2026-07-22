@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CapaEntidad;
 using CapaLogica;
@@ -14,46 +7,60 @@ namespace MOANSO_PF
 {
     public partial class MantenedorBebida : Form
     {
+        private int _bebidaID = 0;
+
         public MantenedorBebida()
         {
             InitializeComponent();
-            gbBebida.Enabled = true;
+            gbBebida.Enabled = false;
             listarBebida();
             llenarDatosCB();
         }
+
         public void listarBebida()
         {
             dgvBebida.DataSource = logBebida.Instancia.ListarBebida();
         }
+
         public void limpiarVariables()
         {
-            txtIdBebida.Text = "";
             txtNombreBebida.Text = "";
             txtPrecioBebida.Text = "";
+            txtTamBebida.Text = "";
+            chbEstadoBebida.Checked = true;
+            _bebidaID = 0;
         }
+
         public void llenarDatosCB()
         {
             cbTBebida.DataSource = logTipoBebida.Instancia.ListarTBebida();
             cbTBebida.DisplayMember = "NombreTipo";
             cbTBebida.ValueMember = "IdTipoBebida";
         }
+
         private void btnAgregarBebida_Click(object sender, EventArgs e)
         {
-            try
+            if (!decimal.TryParse(txtPrecioBebida.Text.Trim(), out decimal precio))
             {
-                entBebida eb = new entBebida();
-                eb.IdBebida = int.Parse(txtIdBebida.Text.Trim());
-                eb.NombreBebida = txtNombreBebida.Text.Trim();
-                eb.Precio = decimal.Parse(txtPrecioBebida.Text.Trim());
-                eb.Tamaño = txtTamBebida.Text.Trim();
-                eb.EstadoBebida = chbEstadoBebida.Checked;
-                eb.TipoBebida = Convert.ToInt32(cbTBebida.SelectedValue);
-                logBebida.Instancia.agregarBebida(eb);
+                MessageBox.Show("Precio debe ser un valor numérico válido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception exc)
+
+            entBebida eb = new entBebida
             {
-                MessageBox.Show("Error..." + exc);
-            }
+                NombreBebida = txtNombreBebida.Text.Trim(),
+                Precio = precio,
+                Tamaño = txtTamBebida.Text.Trim(),
+                EstadoBebida = chbEstadoBebida.Checked,
+                TipoBebida = Convert.ToInt32(cbTBebida.SelectedValue)
+            };
+
+            var result = logBebida.Instancia.agregarBebida(eb);
+            if (result.Success)
+                MessageBox.Show("Bebida registrada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             gbBebida.Enabled = false;
             listarBebida();
@@ -61,20 +68,34 @@ namespace MOANSO_PF
 
         private void btnModificarBebida_Click(object sender, EventArgs e)
         {
-            try
+            if (_bebidaID == 0)
             {
-                entBebida eb = new entBebida();
-                eb.IdBebida = int.Parse(txtIdBebida.Text.Trim());
-                eb.NombreBebida = txtNombreBebida.Text.Trim();
-                eb.Precio = decimal.Parse(txtPrecioBebida.Text.Trim());
-                eb.Tamaño = txtTamBebida.Text.Trim();
-                eb.EstadoBebida = chbEstadoBebida.Checked;
-                logBebida.Instancia.modificarBebida(eb);
+                MessageBox.Show("Seleccione una bebida de la lista.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception exc)
+
+            if (!decimal.TryParse(txtPrecioBebida.Text.Trim(), out decimal precio))
             {
-                MessageBox.Show("Error..." + exc);
+                MessageBox.Show("Precio debe ser un valor numérico válido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
+
+            entBebida eb = new entBebida
+            {
+                IdBebida = _bebidaID,
+                NombreBebida = txtNombreBebida.Text.Trim(),
+                Precio = precio,
+                Tamaño = txtTamBebida.Text.Trim(),
+                EstadoBebida = chbEstadoBebida.Checked,
+                TipoBebida = Convert.ToInt32(cbTBebida.SelectedValue)
+            };
+
+            var result = logBebida.Instancia.modificarBebida(eb);
+            if (result.Success)
+                MessageBox.Show("Bebida modificada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             gbBebida.Enabled = false;
             listarBebida();
@@ -82,17 +103,18 @@ namespace MOANSO_PF
 
         private void btnInhabilitarBebida_Click(object sender, EventArgs e)
         {
-            try
+            if (_bebidaID == 0)
             {
-                entBebida eb = new entBebida();
-                eb.IdBebida = int.Parse(txtIdBebida.Text.Trim());
-                chbEstadoBebida.Checked = false;
-                logBebida.Instancia.inhabilitarBebida(eb);
+                MessageBox.Show("Seleccione una bebida de la lista.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception exc)
-            {
-                MessageBox.Show("Error..." + exc);
-            }
+
+            var result = logBebida.Instancia.inhabilitarBebida(_bebidaID);
+            if (result.Success)
+                MessageBox.Show("Bebida inhabilitada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             gbBebida.Enabled = false;
             listarBebida();
@@ -100,8 +122,9 @@ namespace MOANSO_PF
 
         private void dgvBebida_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0) return;
             DataGridViewRow filaActual = dgvBebida.Rows[e.RowIndex];
-            txtIdBebida.Text = filaActual.Cells[0].Value.ToString();
+            _bebidaID = Convert.ToInt32(filaActual.Cells[0].Value);
             txtNombreBebida.Text = filaActual.Cells[1].Value.ToString();
             txtPrecioBebida.Text = filaActual.Cells[2].Value.ToString();
             txtTamBebida.Text = filaActual.Cells[3].Value.ToString();
@@ -111,7 +134,7 @@ namespace MOANSO_PF
         private void btnNuevo_Click(object sender, EventArgs e)
         {
             gbBebida.Enabled = true;
-            btnModificarBebida.Enabled = true;
+            btnModificarBebida.Enabled = false;
             limpiarVariables();
             btnAgregarBebida.Enabled = true;
         }
@@ -121,6 +144,11 @@ namespace MOANSO_PF
             gbBebida.Enabled = true;
             btnModificarBebida.Enabled = true;
             btnAgregarBebida.Enabled = false;
+        }
+
+        private void btnRegresar_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

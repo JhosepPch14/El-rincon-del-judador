@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
+using System.Configuration;
 
 namespace CapaDatos
 {
@@ -16,9 +11,7 @@ namespace CapaDatos
         }
         public SqlConnection Conectar() {
             SqlConnection cn = new SqlConnection();
-            cn.ConnectionString = "Data Source = PCHE\\SQLEXPRESS; Initial Catalog = DDL_MOANSO;" +
-            "Integrated Security = true";
-
+            cn.ConnectionString = ConfigurationManager.ConnectionStrings["Conexion"].ConnectionString;
             return cn;
         }
     }

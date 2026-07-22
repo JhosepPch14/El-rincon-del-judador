@@ -11,7 +11,7 @@ namespace CapaEntidad
         public int IDDetalle { get; set; }
         public int IDRequerimiento { get; set; }
         public int IDInsumo { get; set; }
-        public string Cantidad { get; set; }
+        public decimal Cantidad { get; set; }
 
         public string NombreInsumo { get; set; } 
     }

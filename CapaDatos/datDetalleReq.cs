@@ -2,78 +2,72 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CapaEntidad;
 
 namespace CapaDatos
 {
-    public class datDetalleReq
+    public class datDetalleReq : IdatDetalleReq
     {
-        #region Singleton
         private static readonly datDetalleReq _instance = new datDetalleReq();
-        public static datDetalleReq Instancia
+        public static datDetalleReq Instancia { get { return _instance; } }
+
+        public List<entDetalleReq> ListarDetalles(int requerimientoID)
         {
-            get { return datDetalleReq._instance; }
-        }
-        #endregion Singleton
-
-        #region Metodos
-
-        public List<entDetalleReq> ListarDetalles(int requerimientoID) {
-            SqlCommand cmd = null;
             List<entDetalleReq> list = new List<entDetalleReq>();
-            try {
-                SqlConnection cn = Conexion.Instancia.Conectar(); //singleton
-                cmd = new SqlCommand("spListarDetalleReq", cn);
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spListarDetalleReq", cn))
+            {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@RequerimientoDeInsumoID", requerimientoID);
                 cn.Open();
-                SqlDataReader dr = cmd.ExecuteReader();
-                while (dr.Read()) {
-                    entDetalleReq dri = new entDetalleReq()
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
                     {
-                        IDDetalle = Convert.ToInt32(dr["DetallesReqID"]),
-                        IDRequerimiento = Convert.ToInt32(dr["RequerimientoDeInsumoID"]),
-                        IDInsumo = Convert.ToInt32(dr["InsumosID"]),
-                        NombreInsumo = dr["Nombre"].ToString(),
-                        Cantidad = dr["Cantidad"].ToString(),
-                    };
-                    list.Add(dri);
+                        list.Add(new entDetalleReq
+                        {
+                            IDDetalle = Convert.ToInt32(dr["DetallesreqID"]),
+                            IDRequerimiento = Convert.ToInt32(dr["RequerimientoDeInsumoID"]),
+                            IDInsumo = Convert.ToInt32(dr["InsumosID"]),
+                            NombreInsumo = dr["Nombre"].ToString(),
+                            Cantidad = Convert.ToDecimal(dr["Cantidad"])
+                        });
+                    }
                 }
             }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
             return list;
         }
 
-        public Boolean registrarDetalleReq(List<entDetalleReq> ldr, int requerimientoID)
+        public bool registrarDetalleReq(List<entDetalleReq> ldr, int requerimientoID)
         {
-            SqlCommand cmd = null;
-            Boolean registrar = false;
-            try {
-                SqlConnection cn = Conexion.Instancia.Conectar();
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            {
                 cn.Open();
-
-                foreach (var item in ldr)
+                using (SqlTransaction tran = cn.BeginTransaction())
                 {
-                    cmd = new SqlCommand("spInsertarDetalleReq", cn);
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    cmd.Parameters.AddWithValue("@RequerimientoDeInsumoID", requerimientoID);
-                    cmd.Parameters.AddWithValue("@InsumosID", item.IDInsumo);
-                    cmd.Parameters.AddWithValue("@Cantidad", item.Cantidad);
-
-                    int i = cmd.ExecuteNonQuery();
-                    if (i > 0) registrar = true;
+                    try
+                    {
+                        foreach (var item in ldr)
+                        {
+                            using (SqlCommand cmd = new SqlCommand("spInsertarDetalleReq", cn, tran))
+                            {
+                                cmd.CommandType = CommandType.StoredProcedure;
+                                cmd.Parameters.AddWithValue("@RequerimientoDeInsumoID", requerimientoID);
+                                cmd.Parameters.AddWithValue("@InsumosID", item.IDInsumo);
+                                cmd.Parameters.AddWithValue("@Cantidad", item.Cantidad);
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                        tran.Commit();
+                        return true;
+                    }
+                    catch
+                    {
+                        tran.Rollback();
+                        return false;
+                    }
                 }
             }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
-            return registrar;
         }
-
-        #endregion Metodos
     }
 }

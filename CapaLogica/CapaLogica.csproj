@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces.cs" />
     <Compile Include="logBebida.cs" />
     <Compile Include="logCliente.cs" />
     <Compile Include="logCompraReq.cs" />

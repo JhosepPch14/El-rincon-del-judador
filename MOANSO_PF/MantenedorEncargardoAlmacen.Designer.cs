@@ -57,7 +57,7 @@
             // 
             this.btnNuevo.Location = new System.Drawing.Point(357, 346);
             this.btnNuevo.Name = "btnNuevo";
-            this.btnNuevo.Size = new System.Drawing.Size(75, 23);
+            this.btnNuevo.Size = new System.Drawing.Size(80, 30);
             this.btnNuevo.TabIndex = 33;
             this.btnNuevo.Text = "Nuevo";
             this.btnNuevo.UseVisualStyleBackColor = true;
@@ -67,7 +67,7 @@
             // 
             this.btnDatos.Location = new System.Drawing.Point(505, 346);
             this.btnDatos.Name = "btnDatos";
-            this.btnDatos.Size = new System.Drawing.Size(75, 23);
+            this.btnDatos.Size = new System.Drawing.Size(78, 30);
             this.btnDatos.TabIndex = 32;
             this.btnDatos.Text = "Editar Datos";
             this.btnDatos.UseVisualStyleBackColor = true;
@@ -91,23 +91,24 @@
             this.gbDatos.Size = new System.Drawing.Size(308, 255);
             this.gbDatos.TabIndex = 31;
             this.gbDatos.TabStop = false;
-            this.gbDatos.Text = "Datos del Encargado Almacen:";
+            this.gbDatos.Text = "Datos del Encargado:";
             // 
             // lblIdCliente
             // 
             this.lblIdCliente.AutoSize = true;
-            this.lblIdCliente.Location = new System.Drawing.Point(47, 35);
+            this.lblIdCliente.Location = new System.Drawing.Point(43, 38);
             this.lblIdCliente.Name = "lblIdCliente";
-            this.lblIdCliente.Size = new System.Drawing.Size(21, 13);
+            this.lblIdCliente.Size = new System.Drawing.Size(27, 20);
             this.lblIdCliente.TabIndex = 1;
             this.lblIdCliente.Text = "ID:";
+            this.lblIdCliente.Visible = false;
             // 
             // chbEstadoEnAlmacen
             // 
             this.chbEstadoEnAlmacen.AutoSize = true;
-            this.chbEstadoEnAlmacen.Location = new System.Drawing.Point(124, 232);
+            this.chbEstadoEnAlmacen.Location = new System.Drawing.Point(7, 218);
             this.chbEstadoEnAlmacen.Name = "chbEstadoEnAlmacen";
-            this.chbEstadoEnAlmacen.Size = new System.Drawing.Size(59, 17);
+            this.chbEstadoEnAlmacen.Size = new System.Drawing.Size(76, 24);
             this.chbEstadoEnAlmacen.TabIndex = 20;
             this.chbEstadoEnAlmacen.Text = "Estado";
             this.chbEstadoEnAlmacen.UseVisualStyleBackColor = true;
@@ -115,73 +116,74 @@
             // lblDNICliente
             // 
             this.lblDNICliente.AutoSize = true;
-            this.lblDNICliente.Location = new System.Drawing.Point(48, 75);
+            this.lblDNICliente.Location = new System.Drawing.Point(32, 77);
             this.lblDNICliente.Name = "lblDNICliente";
-            this.lblDNICliente.Size = new System.Drawing.Size(29, 13);
+            this.lblDNICliente.Size = new System.Drawing.Size(38, 20);
             this.lblDNICliente.TabIndex = 2;
             this.lblDNICliente.Text = "DNI:";
             // 
             // dtpFechaRegistro
             // 
-            this.dtpFechaRegistro.Location = new System.Drawing.Point(93, 190);
+            this.dtpFechaRegistro.Location = new System.Drawing.Point(97, 180);
             this.dtpFechaRegistro.Name = "dtpFechaRegistro";
-            this.dtpFechaRegistro.Size = new System.Drawing.Size(200, 20);
+            this.dtpFechaRegistro.Size = new System.Drawing.Size(200, 27);
             this.dtpFechaRegistro.TabIndex = 19;
             // 
             // lblNombre
             // 
             this.lblNombre.AutoSize = true;
-            this.lblNombre.Location = new System.Drawing.Point(47, 117);
+            this.lblNombre.Location = new System.Drawing.Point(7, 113);
             this.lblNombre.Name = "lblNombre";
-            this.lblNombre.Size = new System.Drawing.Size(47, 13);
+            this.lblNombre.Size = new System.Drawing.Size(67, 20);
             this.lblNombre.TabIndex = 3;
             this.lblNombre.Text = "Nombre:";
             // 
             // lblNumero
             // 
             this.lblNumero.AutoSize = true;
-            this.lblNumero.Location = new System.Drawing.Point(47, 156);
+            this.lblNumero.Location = new System.Drawing.Point(7, 148);
             this.lblNumero.Name = "lblNumero";
-            this.lblNumero.Size = new System.Drawing.Size(47, 13);
+            this.lblNumero.Size = new System.Drawing.Size(66, 20);
             this.lblNumero.TabIndex = 4;
             this.lblNumero.Text = "Numero:";
             // 
             // txtNumeroEnAlmacen
             // 
-            this.txtNumeroEnAlmacen.Location = new System.Drawing.Point(100, 149);
+            this.txtNumeroEnAlmacen.Location = new System.Drawing.Point(97, 145);
             this.txtNumeroEnAlmacen.Name = "txtNumeroEnAlmacen";
-            this.txtNumeroEnAlmacen.Size = new System.Drawing.Size(100, 20);
+            this.txtNumeroEnAlmacen.Size = new System.Drawing.Size(100, 27);
             this.txtNumeroEnAlmacen.TabIndex = 17;
             // 
             // txtNombreEnAlmacen
             // 
-            this.txtNombreEnAlmacen.Location = new System.Drawing.Point(100, 110);
+            this.txtNombreEnAlmacen.Location = new System.Drawing.Point(97, 110);
             this.txtNombreEnAlmacen.Name = "txtNombreEnAlmacen";
-            this.txtNombreEnAlmacen.Size = new System.Drawing.Size(100, 20);
+            this.txtNombreEnAlmacen.Size = new System.Drawing.Size(100, 27);
             this.txtNombreEnAlmacen.TabIndex = 16;
             // 
             // lblFecha
             // 
             this.lblFecha.AutoSize = true;
-            this.lblFecha.Location = new System.Drawing.Point(47, 197);
+            this.lblFecha.Location = new System.Drawing.Point(7, 183);
             this.lblFecha.Name = "lblFecha";
-            this.lblFecha.Size = new System.Drawing.Size(40, 13);
+            this.lblFecha.Size = new System.Drawing.Size(50, 20);
             this.lblFecha.TabIndex = 6;
             this.lblFecha.Text = "Fecha:";
             // 
             // txtDNIEnAlmacen
             // 
-            this.txtDNIEnAlmacen.Location = new System.Drawing.Point(83, 68);
+            this.txtDNIEnAlmacen.Location = new System.Drawing.Point(97, 77);
             this.txtDNIEnAlmacen.Name = "txtDNIEnAlmacen";
-            this.txtDNIEnAlmacen.Size = new System.Drawing.Size(100, 20);
+            this.txtDNIEnAlmacen.Size = new System.Drawing.Size(100, 27);
             this.txtDNIEnAlmacen.TabIndex = 15;
             // 
             // txtIDEnAlmacen
             // 
-            this.txtIDEnAlmacen.Location = new System.Drawing.Point(74, 28);
+            this.txtIDEnAlmacen.Location = new System.Drawing.Point(97, 35);
             this.txtIDEnAlmacen.Name = "txtIDEnAlmacen";
-            this.txtIDEnAlmacen.Size = new System.Drawing.Size(100, 20);
+            this.txtIDEnAlmacen.Size = new System.Drawing.Size(100, 27);
             this.txtIDEnAlmacen.TabIndex = 14;
+            this.txtIDEnAlmacen.Visible = false;
             // 
             // dgvEnAlmacen
             // 
@@ -189,15 +191,16 @@
             this.dgvEnAlmacen.Location = new System.Drawing.Point(357, 26);
             this.dgvEnAlmacen.Name = "dgvEnAlmacen";
             this.dgvEnAlmacen.ReadOnly = true;
-            this.dgvEnAlmacen.Size = new System.Drawing.Size(750, 296);
+            this.dgvEnAlmacen.RowHeadersWidth = 51;
+            this.dgvEnAlmacen.Size = new System.Drawing.Size(470, 296);
             this.dgvEnAlmacen.TabIndex = 30;
             this.dgvEnAlmacen.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvEnAlmacen_CellContentClick);
             // 
             // btnInhabilitar
             // 
-            this.btnInhabilitar.Location = new System.Drawing.Point(155, 346);
+            this.btnInhabilitar.Location = new System.Drawing.Point(221, 340);
             this.btnInhabilitar.Name = "btnInhabilitar";
-            this.btnInhabilitar.Size = new System.Drawing.Size(75, 23);
+            this.btnInhabilitar.Size = new System.Drawing.Size(86, 36);
             this.btnInhabilitar.TabIndex = 29;
             this.btnInhabilitar.Text = "Inhabilitar";
             this.btnInhabilitar.UseVisualStyleBackColor = true;
@@ -205,9 +208,9 @@
             // 
             // btnModificar
             // 
-            this.btnModificar.Location = new System.Drawing.Point(33, 299);
+            this.btnModificar.Location = new System.Drawing.Point(29, 340);
             this.btnModificar.Name = "btnModificar";
-            this.btnModificar.Size = new System.Drawing.Size(75, 23);
+            this.btnModificar.Size = new System.Drawing.Size(85, 36);
             this.btnModificar.TabIndex = 28;
             this.btnModificar.Text = "Modificar";
             this.btnModificar.UseVisualStyleBackColor = true;
@@ -215,9 +218,9 @@
             // 
             // btnAgregar
             // 
-            this.btnAgregar.Location = new System.Drawing.Point(264, 299);
+            this.btnAgregar.Location = new System.Drawing.Point(120, 340);
             this.btnAgregar.Name = "btnAgregar";
-            this.btnAgregar.Size = new System.Drawing.Size(75, 23);
+            this.btnAgregar.Size = new System.Drawing.Size(85, 36);
             this.btnAgregar.TabIndex = 27;
             this.btnAgregar.Text = "Agregar";
             this.btnAgregar.UseVisualStyleBackColor = true;
@@ -225,36 +228,38 @@
             // 
             // btnConfirmar
             // 
-            this.btnConfirmar.Location = new System.Drawing.Point(1020, 426);
+            this.btnConfirmar.Location = new System.Drawing.Point(740, 430);
             this.btnConfirmar.Name = "btnConfirmar";
-            this.btnConfirmar.Size = new System.Drawing.Size(75, 23);
+            this.btnConfirmar.Size = new System.Drawing.Size(87, 38);
             this.btnConfirmar.TabIndex = 26;
             this.btnConfirmar.Text = "Confirmar";
             this.btnConfirmar.UseVisualStyleBackColor = true;
             // 
             // btnCancelar
             // 
-            this.btnCancelar.Location = new System.Drawing.Point(798, 426);
+            this.btnCancelar.Location = new System.Drawing.Point(390, 430);
             this.btnCancelar.Name = "btnCancelar";
-            this.btnCancelar.Size = new System.Drawing.Size(75, 23);
+            this.btnCancelar.Size = new System.Drawing.Size(82, 38);
             this.btnCancelar.TabIndex = 25;
             this.btnCancelar.Text = "Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = true;
             // 
             // btnRegresar
             // 
-            this.btnRegresar.Location = new System.Drawing.Point(12, 426);
+            this.btnRegresar.Location = new System.Drawing.Point(20, 430);
             this.btnRegresar.Name = "btnRegresar";
-            this.btnRegresar.Size = new System.Drawing.Size(75, 23);
+            this.btnRegresar.Size = new System.Drawing.Size(81, 38);
             this.btnRegresar.TabIndex = 24;
             this.btnRegresar.Text = "Regresar";
             this.btnRegresar.UseVisualStyleBackColor = true;
+            this.btnRegresar.Click += new System.EventHandler(this.btnRegresar_Click);
             // 
             // MantenedorEncargardoAlmacen
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1126, 461);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(237)))), ((int)(((byte)(214)))));
+            this.ClientSize = new System.Drawing.Size(850, 480);
             this.Controls.Add(this.btnNuevo);
             this.Controls.Add(this.btnDatos);
             this.Controls.Add(this.gbDatos);
@@ -265,8 +270,10 @@
             this.Controls.Add(this.btnConfirmar);
             this.Controls.Add(this.btnCancelar);
             this.Controls.Add(this.btnRegresar);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.Name = "MantenedorEncargardoAlmacen";
-            this.Text = "MantenedorEncargardoAlmacen";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Almacén";
             this.gbDatos.ResumeLayout(false);
             this.gbDatos.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvEnAlmacen)).EndInit();

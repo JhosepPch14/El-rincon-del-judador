@@ -59,18 +59,18 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(55, 40);
+            this.label2.Location = new System.Drawing.Point(39, 35);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(44, 13);
+            this.label2.Size = new System.Drawing.Size(60, 20);
             this.label2.TabIndex = 1;
             this.label2.Text = "Insumo:";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(55, 91);
+            this.label3.Location = new System.Drawing.Point(39, 87);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(52, 13);
+            this.label3.Size = new System.Drawing.Size(72, 20);
             this.label3.TabIndex = 2;
             this.label3.Text = "Cantidad:";
             // 
@@ -80,23 +80,23 @@
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.Location = new System.Drawing.Point(231, 9);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(218, 20);
+            this.label4.Size = new System.Drawing.Size(262, 25);
             this.label4.TabIndex = 3;
             this.label4.Text = "Requerimiento de Compra";
             // 
             // txtCantidad
             // 
-            this.txtCantidad.Location = new System.Drawing.Point(113, 84);
+            this.txtCantidad.Location = new System.Drawing.Point(117, 80);
             this.txtCantidad.Name = "txtCantidad";
-            this.txtCantidad.Size = new System.Drawing.Size(100, 20);
+            this.txtCantidad.Size = new System.Drawing.Size(121, 27);
             this.txtCantidad.TabIndex = 5;
             // 
             // chbEstadoReq
             // 
             this.chbEstadoReq.AutoSize = true;
-            this.chbEstadoReq.Location = new System.Drawing.Point(677, 177);
+            this.chbEstadoReq.Location = new System.Drawing.Point(695, 178);
             this.chbEstadoReq.Name = "chbEstadoReq";
-            this.chbEstadoReq.Size = new System.Drawing.Size(59, 17);
+            this.chbEstadoReq.Size = new System.Drawing.Size(76, 24);
             this.chbEstadoReq.TabIndex = 6;
             this.chbEstadoReq.Text = "Estado";
             this.chbEstadoReq.UseVisualStyleBackColor = true;
@@ -117,6 +117,7 @@
             this.dgvReqInsum.Location = new System.Drawing.Point(111, 79);
             this.dgvReqInsum.Name = "dgvReqInsum";
             this.dgvReqInsum.ReadOnly = true;
+            this.dgvReqInsum.RowHeadersWidth = 51;
             this.dgvReqInsum.Size = new System.Drawing.Size(485, 172);
             this.dgvReqInsum.TabIndex = 14;
             this.dgvReqInsum.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvReqInsum_CellContentClick);
@@ -125,16 +126,17 @@
             // 
             this.btnRegresar.Location = new System.Drawing.Point(29, 522);
             this.btnRegresar.Name = "btnRegresar";
-            this.btnRegresar.Size = new System.Drawing.Size(75, 23);
+            this.btnRegresar.Size = new System.Drawing.Size(75, 30);
             this.btnRegresar.TabIndex = 15;
             this.btnRegresar.Text = "Regresar";
             this.btnRegresar.UseVisualStyleBackColor = true;
+            this.btnRegresar.Click += new System.EventHandler(this.btnRegresar_Click);
             // 
             // btnCancelar
             // 
             this.btnCancelar.Location = new System.Drawing.Point(475, 522);
             this.btnCancelar.Name = "btnCancelar";
-            this.btnCancelar.Size = new System.Drawing.Size(75, 23);
+            this.btnCancelar.Size = new System.Drawing.Size(76, 30);
             this.btnCancelar.TabIndex = 16;
             this.btnCancelar.Text = "Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = true;
@@ -143,7 +145,7 @@
             // 
             this.btnListo.Location = new System.Drawing.Point(728, 522);
             this.btnListo.Name = "btnListo";
-            this.btnListo.Size = new System.Drawing.Size(75, 23);
+            this.btnListo.Size = new System.Drawing.Size(83, 30);
             this.btnListo.TabIndex = 17;
             this.btnListo.Text = "Confirmar";
             this.btnListo.UseVisualStyleBackColor = true;
@@ -151,9 +153,9 @@
             // cbInsumos
             // 
             this.cbInsumos.FormattingEnabled = true;
-            this.cbInsumos.Location = new System.Drawing.Point(105, 32);
+            this.cbInsumos.Location = new System.Drawing.Point(117, 32);
             this.cbInsumos.Name = "cbInsumos";
-            this.cbInsumos.Size = new System.Drawing.Size(121, 21);
+            this.cbInsumos.Size = new System.Drawing.Size(121, 28);
             this.cbInsumos.TabIndex = 18;
             // 
             // gbDatosReq
@@ -181,9 +183,9 @@
             // 
             // btnRegistrar
             // 
-            this.btnRegistrar.Location = new System.Drawing.Point(602, 211);
+            this.btnRegistrar.Location = new System.Drawing.Point(607, 219);
             this.btnRegistrar.Name = "btnRegistrar";
-            this.btnRegistrar.Size = new System.Drawing.Size(105, 40);
+            this.btnRegistrar.Size = new System.Drawing.Size(82, 32);
             this.btnRegistrar.TabIndex = 21;
             this.btnRegistrar.Text = "Generar Requerimiento";
             this.btnRegistrar.UseVisualStyleBackColor = true;
@@ -191,9 +193,9 @@
             // 
             // btnAnular
             // 
-            this.btnAnular.Location = new System.Drawing.Point(602, 79);
+            this.btnAnular.Location = new System.Drawing.Point(607, 83);
             this.btnAnular.Name = "btnAnular";
-            this.btnAnular.Size = new System.Drawing.Size(105, 35);
+            this.btnAnular.Size = new System.Drawing.Size(82, 27);
             this.btnAnular.TabIndex = 22;
             this.btnAnular.Text = "Anular Requerimiento";
             this.btnAnular.UseVisualStyleBackColor = true;
@@ -201,17 +203,17 @@
             // 
             // dtpFRegistro
             // 
-            this.dtpFRegistro.Location = new System.Drawing.Point(393, 53);
+            this.dtpFRegistro.Location = new System.Drawing.Point(466, 50);
             this.dtpFRegistro.Name = "dtpFRegistro";
-            this.dtpFRegistro.Size = new System.Drawing.Size(200, 20);
+            this.dtpFRegistro.Size = new System.Drawing.Size(200, 27);
             this.dtpFRegistro.TabIndex = 24;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(290, 58);
+            this.label7.Location = new System.Drawing.Point(318, 53);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(97, 13);
+            this.label7.Size = new System.Drawing.Size(130, 20);
             this.label7.TabIndex = 23;
             this.label7.Text = "Fecha de Registro:";
             // 
@@ -221,6 +223,7 @@
             this.dgvDetalleReq.Location = new System.Drawing.Point(361, 268);
             this.dgvDetalleReq.Name = "dgvDetalleReq";
             this.dgvDetalleReq.ReadOnly = true;
+            this.dgvDetalleReq.RowHeadersWidth = 51;
             this.dgvDetalleReq.Size = new System.Drawing.Size(475, 222);
             this.dgvDetalleReq.TabIndex = 25;
             this.dgvDetalleReq.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvDetalleReq_CellContentClick);
@@ -238,41 +241,44 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(108, 60);
+            this.label1.Location = new System.Drawing.Point(84, 53);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(92, 13);
+            this.label1.Size = new System.Drawing.Size(129, 20);
             this.label1.TabIndex = 27;
             this.label1.Text = "ID Requerimiento:";
+            this.label1.Visible = false;
             // 
             // txtIDRequerimiento
             // 
-            this.txtIDRequerimiento.Location = new System.Drawing.Point(206, 53);
+            this.txtIDRequerimiento.Location = new System.Drawing.Point(219, 50);
             this.txtIDRequerimiento.Name = "txtIDRequerimiento";
-            this.txtIDRequerimiento.Size = new System.Drawing.Size(78, 20);
+            this.txtIDRequerimiento.Size = new System.Drawing.Size(78, 27);
             this.txtIDRequerimiento.TabIndex = 28;
+            this.txtIDRequerimiento.Visible = false;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(603, 158);
+            this.label5.Location = new System.Drawing.Point(614, 135);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(106, 13);
+            this.label5.Size = new System.Drawing.Size(146, 20);
             this.label5.TabIndex = 29;
             this.label5.Text = "Encargado Almacen ";
             // 
             // cbEnAlmacen
             // 
             this.cbEnAlmacen.FormattingEnabled = true;
-            this.cbEnAlmacen.Location = new System.Drawing.Point(715, 150);
+            this.cbEnAlmacen.Location = new System.Drawing.Point(766, 127);
             this.cbEnAlmacen.Name = "cbEnAlmacen";
-            this.cbEnAlmacen.Size = new System.Drawing.Size(121, 21);
+            this.cbEnAlmacen.Size = new System.Drawing.Size(121, 28);
             this.cbEnAlmacen.TabIndex = 30;
             // 
             // RequerimientoInsumos
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(863, 564);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(237)))), ((int)(((byte)(214)))));
+            this.ClientSize = new System.Drawing.Size(917, 564);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.cbEnAlmacen);
             this.Controls.Add(this.label1);
@@ -292,8 +298,10 @@
             this.Controls.Add(this.dgvReqInsum);
             this.Controls.Add(this.btnAgregarDetalle);
             this.Controls.Add(this.label4);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.Name = "RequerimientoInsumos";
-            this.Text = "RequerimientoInsumos";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Pedido de Insumos";
             ((System.ComponentModel.ISupportInitialize)(this.dgvReqInsum)).EndInit();
             this.gbDatosReq.ResumeLayout(false);
             this.gbDatosReq.PerformLayout();

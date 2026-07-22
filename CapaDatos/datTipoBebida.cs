@@ -1,112 +1,85 @@
-﻿using CapaEntidad;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
+using CapaEntidad;
 
 namespace CapaDatos
 {
-    public class datTipoBebida
+    public class datTipoBebida : IdatTipoBebida
     {
-        #region Singleton
-        private static readonly datTipoBebida _instancia = new datTipoBebida();
-        public static datTipoBebida Instancia => _instancia;
-        #endregion
+        private static readonly datTipoBebida _instance = new datTipoBebida();
+        public static datTipoBebida Instancia => _instance;
 
-        //Listar
         public List<entTipoBebida> ListarTBebida()
         {
-            List<entTipoBebida> lista = new List<entTipoBebida>();
-            SqlCommand cmd = null;
-            try
+            List<entTipoBebida> list = new List<entTipoBebida>();
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spListarTipoBebida", cn))
             {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("spListarTipoBebida", cn);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cn.Open();
-                SqlDataReader dr = cmd.ExecuteReader();
-                while (dr.Read())
+                using (SqlDataReader dr = cmd.ExecuteReader())
                 {
-                    lista.Add(new entTipoBebida
+                    while (dr.Read())
                     {
-                        IdTipoBebida = Convert.ToInt32(dr["IdTipoBebida"]),
-                        NombreTipo = dr["NombreTipo"].ToString(),
-                        Estado = Convert.ToBoolean(dr["Estado"])
-                    });
+                        list.Add(new entTipoBebida
+                        {
+                            IdTipoBebida = Convert.ToInt32(dr["IdTipoBebida"]),
+                            NombreTipo = dr["NombreTipo"].ToString(),
+                            Estado = Convert.ToBoolean(dr["Estado"])
+                        });
+                    }
                 }
             }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            return lista;
+            return list;
         }
 
-        //Insertar 
-        public bool InsertarTBebida(entTipoBebida tb)
+        public int InsertarTBebida(entTipoBebida tb)
         {
-            SqlCommand cmd = null;
-            bool rpta = false;
-            try
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
             {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("sp_InsertarTipoBebida", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@IdTipoBebida", tb.IdTipoBebida);
-                cmd.Parameters.AddWithValue("@NombreTipo", tb.NombreTipo);
-                cmd.Parameters.AddWithValue("@Estado", tb.Estado);
                 cn.Open();
-                cmd.ExecuteNonQuery();
-                rpta = true;
+                using (SqlCommand cmdMax = new SqlCommand("SELECT ISNULL(MAX(IdTipoBebida), 0) + 1 FROM Tipobebida", cn))
+                {
+                    tb.IdTipoBebida = (int)cmdMax.ExecuteScalar();
+                }
+                using (SqlCommand cmd = new SqlCommand("spInsertarTipoBebida", cn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@IdTipoBebida", tb.IdTipoBebida);
+                    cmd.Parameters.AddWithValue("@NombreTipo", tb.NombreTipo);
+                    cmd.Parameters.AddWithValue("@Estado", tb.Estado);
+                    cmd.ExecuteNonQuery();
+                }
             }
-            catch (Exception) { throw; }
-            finally { if (cmd != null) cmd.Connection.Close(); }
-            return rpta;
+            return tb.IdTipoBebida;
         }
 
-        //Modificar 
         public bool ModificarTBebida(entTipoBebida tb)
         {
-            SqlCommand cmd = null;
-            bool rpta = false;
-            try
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spModificarTipoBebida", cn))
             {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("sp_ModificarTipoBebida", cn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@IdTipoBebida", tb.IdTipoBebida);
                 cmd.Parameters.AddWithValue("@NombreTipo", tb.NombreTipo);
                 cmd.Parameters.AddWithValue("@Estado", tb.Estado);
                 cn.Open();
-                cmd.ExecuteNonQuery();
-                rpta = true;
+                return cmd.ExecuteNonQuery() > 0;
             }
-            catch (Exception) { throw; }
-            finally { if (cmd != null) cmd.Connection.Close(); }
-            return rpta;
         }
 
-        //Inhabilitar
-        public bool InhabilitarTBebida(entTipoBebida tb)
+        public bool InhabilitarTBebida(int idTipo)
         {
-            SqlCommand cmd = null;
-            bool rpta = false;
-            try
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spInhabilitarTipoBebida", cn))
             {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("sp_InhabilitarTipoBebida", cn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@IdTipoBebida", tb.IdTipoBebida);
+                cmd.Parameters.AddWithValue("@IdTipoBebida", idTipo);
                 cn.Open();
-                cmd.ExecuteNonQuery();
-                rpta = true;
+                return cmd.ExecuteNonQuery() > 0;
             }
-            catch (Exception) { throw; }
-            finally { if (cmd != null) cmd.Connection.Close(); }
-            return rpta;
         }
     }
 }
-

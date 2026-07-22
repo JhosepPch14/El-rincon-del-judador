@@ -1,102 +1,79 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.SqlClient;
 using CapaEntidad;
 
 namespace CapaDatos
 {
-    public class datComprobantePago
+    public class datComprobantePago : IdatComprobantePago
     {
-        #region Singleton
         private static readonly datComprobantePago _instance = new datComprobantePago();
-        public static datComprobantePago Instancia
-        {
-            get { return datComprobantePago._instance; }
-        }
-        #endregion Singleton
-
-        #region Metodos
+        public static datComprobantePago Instancia { get { return _instance; } }
 
         public List<entComprobantePago> ListarComprobantes()
         {
-            SqlCommand cmd = null;
             List<entComprobantePago> lista = new List<entComprobantePago>();
-            try
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spListarComprobantes", cn))
             {
-                SqlConnection cn = Conexion.Instancia.Conectar(); //singleton
-                cmd = new SqlCommand("spListarComprobantes", cn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cn.Open();
-                SqlDataReader dr = cmd.ExecuteReader();
-                while (dr.Read())
+                using (SqlDataReader dr = cmd.ExecuteReader())
                 {
-                    entComprobantePago cop = new entComprobantePago();
-                    cop.ComprobanteID = Convert.ToInt32(dr["ComprobanteDeVentaID"]);
-                    cop.PedidoID = Convert.ToInt32(dr["OrdenpedidoID"]);
-                    cop.ClienteID = Convert.ToInt32(dr["ClienteID"]);
-                    cop.FechaEmision = Convert.ToDateTime(dr["FechaEmision"]);
-                    cop.TipoComprobante = dr["TipoComprobante"].ToString();
-                    cop.MontoTotal = Convert.ToDecimal(dr["MontoTotal"]);
-                    cop.EstadoComprobante = Convert.ToBoolean(dr["EstadoComprobante"]);
-                    lista.Add(cop);
+                    while (dr.Read())
+                    {
+                        lista.Add(new entComprobantePago
+                        {
+                            ComprobanteID = Convert.ToInt32(dr["ComprobanteDeVentaID"]),
+                            PedidoID = Convert.ToInt32(dr["OrdenpedidoID"]),
+                            ClienteID = Convert.ToInt32(dr["ClienteID"]),
+                            FechaEmision = Convert.ToDateTime(dr["FechaEmision"]),
+                            TipoComprobante = dr["TipoComprobante"].ToString(),
+                            MontoTotal = Convert.ToDecimal(dr["MontoTotal"]),
+                            EstadoComprobante = Convert.ToBoolean(dr["EstadoComprobante"])
+                        });
+                    }
                 }
             }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
             return lista;
         }
 
-        public Boolean registrarComprobante(entComprobantePago cop) {
-            SqlCommand cmd = null;
-            Boolean agregar = false;
-            try
+        public int registrarComprobante(entComprobantePago cop)
+        {
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
             {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("SpInsertarComprobante", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@ComprobanteDeVentaID", cop.ComprobanteID);
-                cmd.Parameters.AddWithValue("@ClienteID", cop.ClienteID);
-                cmd.Parameters.AddWithValue("@OrdenpedidoID", cop.PedidoID);
-                cmd.Parameters.AddWithValue("@TipoComprobante", cop.TipoComprobante);
-                cmd.Parameters.AddWithValue("@MontoTotal", cop.MontoTotal);
-                cmd.Parameters.AddWithValue("@FechaEmision", cop.FechaEmision);
-                cmd.Parameters.AddWithValue("@EstadoComprobante", cop.EstadoComprobante);
                 cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
+                using (SqlCommand cmdMax = new SqlCommand("SELECT ISNULL(MAX(ComprobanteDeVentaID), 0) + 1 FROM ComprobanteDeVenta", cn))
                 {
-                    agregar = true;
+                    cop.ComprobanteID = (int)cmdMax.ExecuteScalar();
+                }
+                using (SqlCommand cmd = new SqlCommand("spInsertarComprobante", cn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@ComprobanteDeVentaID", cop.ComprobanteID);
+                    cmd.Parameters.AddWithValue("@ClienteID", cop.ClienteID);
+                    cmd.Parameters.AddWithValue("@OrdenpedidoID", cop.PedidoID);
+                    cmd.Parameters.AddWithValue("@TipoComprobante", cop.TipoComprobante);
+                    cmd.Parameters.AddWithValue("@MontoTotal", cop.MontoTotal);
+                    cmd.Parameters.AddWithValue("@FechaEmision", cop.FechaEmision);
+                    cmd.Parameters.AddWithValue("@EstadoComprobante", cop.EstadoComprobante);
+                    cmd.ExecuteNonQuery();
                 }
             }
-            catch (Exception e) { throw e; }
-            finally { if (cmd != null) cmd.Connection.Close(); }
-            return agregar;
-        }
-        public Boolean deshabilitarComprobante(entComprobantePago cop) {
-            SqlCommand cmd = null;
-            Boolean inhabilitar = false;
-            try
-            {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("spAnularComprobante", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@ComprobanteDeVentaID", cop.ComprobanteID);
-                cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
-                {
-                    inhabilitar = true;
-                }
-            }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
-            return inhabilitar;
+            return cop.ComprobanteID;
         }
 
-        #endregion Metodos
+        public bool deshabilitarComprobante(int comprobanteID)
+        {
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spAnularComprobante", cn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@ComprobanteDeVentaID", comprobanteID);
+                cn.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
     }
 }

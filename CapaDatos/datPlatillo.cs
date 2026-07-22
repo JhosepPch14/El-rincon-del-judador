@@ -2,163 +2,89 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CapaEntidad;
 
 namespace CapaDatos
 {
-    public class datPlatillo
+    public class datPlatillo : IdatPlatillo
     {
-        #region singleton
-        private static readonly datPlatillo _instancia = new datPlatillo();
-
-        public static datPlatillo Instancia
-        {
-            get
-            {
-                return datPlatillo._instancia;
-            }
-        }
-        #endregion singleton
-
-        #region metodos
+        private static readonly datPlatillo _instance = new datPlatillo();
+        public static datPlatillo Instancia { get { return _instance; } }
 
         public List<entPlatillo> ListarPlatillo()
         {
-            SqlCommand cmd = null;
-            List<entPlatillo> lista = new List<entPlatillo>();
-            try
+            List<entPlatillo> list = new List<entPlatillo>();
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spListarPlatillos", cn))
             {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("spListarPlatillos", cn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cn.Open();
-                SqlDataReader dr = cmd.ExecuteReader();
-                while (dr.Read())
+                using (SqlDataReader dr = cmd.ExecuteReader())
                 {
-                    entPlatillo platillo = new entPlatillo();
-                    platillo.IdPlatillo = Convert.ToInt32(dr["PlatilloID"]);
-                    platillo.NombrePlatillo = dr["NombrePlatillo"].ToString();
-                    platillo.PrecioPlatillo = Convert.ToDecimal(dr["Precio"]);
-                    platillo.EstadoPlatillo = Convert.ToBoolean(dr["EstadoPlatillo"]);
-                    platillo.IdTipoPlatillo = Convert.ToInt32(dr["TipoPlatilloID"]);
-                    lista.Add(platillo);
+                    while (dr.Read())
+                    {
+                        list.Add(new entPlatillo
+                        {
+                            IdPlatillo = Convert.ToInt32(dr["PlatilloID"]),
+                            NombrePlatillo = dr["NombrePlatillo"].ToString(),
+                            PrecioPlatillo = Convert.ToDecimal(dr["Precio"]),
+                            EstadoPlatillo = Convert.ToBoolean(dr["EstadoPlatillo"]),
+                            IdTipoPlatillo = Convert.ToInt32(dr["TipoPlatilloID"])
+                        });
+                    }
                 }
             }
-            catch (Exception e)
-            {
-                throw new Exception("Error al listar platillos: " + e.Message, e);
-            }
-            finally
-            {
-                    cmd.Connection.Close();
-            }
-            return lista;
+            return list;
         }
 
-        public Boolean InsertarPlatillo(entPlatillo platillo)
+        public int InsertarPlatillo(entPlatillo pl)
         {
-            SqlCommand cmd = null;
-            Boolean inserta = false;
-            try
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
             {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("spInsertarPlatillo", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@PlatilloID", platillo.IdPlatillo);
-                cmd.Parameters.AddWithValue("@NombrePlatillo", platillo.NombrePlatillo);
-                cmd.Parameters.AddWithValue("@Precio", platillo.PrecioPlatillo);
-                cmd.Parameters.AddWithValue("@EstadoPlatillo", platillo.EstadoPlatillo);
-                cmd.Parameters.AddWithValue("@TipoPlatilloID", platillo.IdTipoPlatillo);
-
                 cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
+                using (SqlCommand cmdMax = new SqlCommand("SELECT ISNULL(MAX(PlatilloID), 0) + 1 FROM Platillo", cn))
                 {
-                    inserta = true;
+                    pl.IdPlatillo = (int)cmdMax.ExecuteScalar();
+                }
+                using (SqlCommand cmd = new SqlCommand("spInsertarPlatillo", cn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@PlatilloID", pl.IdPlatillo);
+                    cmd.Parameters.AddWithValue("@NombrePlatillo", pl.NombrePlatillo);
+                    cmd.Parameters.AddWithValue("@Precio", pl.PrecioPlatillo);
+                    cmd.Parameters.AddWithValue("@TipoPlatilloID", pl.IdTipoPlatillo);
+                    cmd.Parameters.AddWithValue("@EstadoPlatillo", pl.EstadoPlatillo);
+                    cmd.ExecuteNonQuery();
                 }
             }
-            catch (Exception e)
-            {
-                throw new Exception("Error al insertar platillo: " + e.Message, e);
-            }
-            finally
-            {
-                if (cmd != null && cmd.Connection.State == ConnectionState.Open)
-                {
-                    cmd.Connection.Close();
-                }
-            }
-            return inserta;
+            return pl.IdPlatillo;
         }
 
-        public Boolean EditarPlatillo(entPlatillo platillo)
+        public bool EditarPlatillo(entPlatillo pl)
         {
-            SqlCommand cmd = null;
-            Boolean edita = false;
-            try
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spEditarPlatillo", cn))
             {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("spEditarPlatillo", cn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@PlatilloID", platillo.IdPlatillo);
-                cmd.Parameters.AddWithValue("@NombrePlatillo", platillo.NombrePlatillo);
-                cmd.Parameters.AddWithValue("@Precio", platillo.PrecioPlatillo);
-                cmd.Parameters.AddWithValue("@EstadoPlatillo", platillo.EstadoPlatillo);
-                //cmd.Parameters.AddWithValue("@TipoPlatilloID", platillo.IdTipoPlatillo);
+                cmd.Parameters.AddWithValue("@PlatilloID", pl.IdPlatillo);
+                cmd.Parameters.AddWithValue("@NombrePlatillo", pl.NombrePlatillo);
+                cmd.Parameters.AddWithValue("@Precio", pl.PrecioPlatillo);
+                cmd.Parameters.AddWithValue("@EstadoPlatillo", pl.EstadoPlatillo);
                 cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
-                {
-                    edita = true;
-                }
+                return cmd.ExecuteNonQuery() > 0;
             }
-            catch (Exception e)
-            {
-                throw new Exception("Error al editar platillo: " + e.Message, e);
-            }
-            finally
-            {
-                if (cmd != null && cmd.Connection.State == ConnectionState.Open)
-                {
-                    cmd.Connection.Close();
-                }
-            }
-            return edita;
         }
 
-        public Boolean DeshabilitarPlatillo(entPlatillo pla)
+        public bool DeshabilitarPlatillo(int platilloID)
         {
-            SqlCommand cmd = null;
-            Boolean deshabilitado = false;
-            try
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spDeshabilitarPlatillo", cn))
             {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("spDeshabilitarPlatillo", cn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@PlatilloID", pla.IdPlatillo);
+                cmd.Parameters.AddWithValue("@PlatilloID", platilloID);
                 cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
-                {
-                    deshabilitado = true;
-                }
+                return cmd.ExecuteNonQuery() > 0;
             }
-            catch (Exception e)
-            {
-                throw new Exception("Error al deshabilitar platillo: " + e.Message, e);
-            }
-            finally
-            {
-                if (cmd != null && cmd.Connection.State == ConnectionState.Open)
-                {
-                    cmd.Connection.Close();
-                }
-            }
-            return deshabilitado;
         }
-        #endregion metodos
     }
 }

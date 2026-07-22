@@ -57,6 +57,7 @@
     <Compile Include="entTipoBebida.cs" />
     <Compile Include="entTPlatillo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Result.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

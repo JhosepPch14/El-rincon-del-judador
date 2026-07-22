@@ -1,148 +1,94 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.SqlClient;
 using CapaEntidad;
 
 namespace CapaDatos
 {
-    public class datEnAlmacen
+    public class datEnAlmacen : IdatEnAlmacen
     {
-        #region Singleton
         private static readonly datEnAlmacen _instance = new datEnAlmacen();
-        public static datEnAlmacen Instancia
-        {
-            get { return datEnAlmacen._instance; }
-        }
-        #endregion Singleton
-
-        #region Metodos
+        public static datEnAlmacen Instancia { get { return _instance; } }
 
         public List<entEnAlmacen> ListarEnAlmacen()
         {
-            SqlCommand cmd = null;
             List<entEnAlmacen> lista = new List<entEnAlmacen>();
-            try
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spListarEnAlmacen", cn))
             {
-                SqlConnection cn = Conexion.Instancia.Conectar(); //singleton
-                cmd = new SqlCommand("spListarEnAlmacen", cn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cn.Open();
-                SqlDataReader dr = cmd.ExecuteReader();
-                while (dr.Read())
+                using (SqlDataReader dr = cmd.ExecuteReader())
                 {
-                    entEnAlmacen ea = new entEnAlmacen();
-                    ea.IDEnAlmacen = Convert.ToInt32(dr["EncargadoalmacenID"]);
-                    ea.Nombre = dr["Nombre"].ToString();
-                    ea.DNI = dr["DNI"].ToString();
-                    ea.Numero = dr["Numero"].ToString();
-                    ea.FechaIngreso = Convert.ToDateTime(dr["FechaRegistro"]);
-                    ea.Estado = Convert.ToBoolean(dr["Estado"]);
-                    lista.Add(ea);
+                    while (dr.Read())
+                    {
+                        lista.Add(new entEnAlmacen
+                        {
+                            IDEnAlmacen = Convert.ToInt32(dr["EncargadoalmacenID"]),
+                            DNI = dr["DNI"].ToString(),
+                            Nombre = dr["Nombre"].ToString(),
+                            Numero = dr["Numero"].ToString(),
+                            FechaIngreso = Convert.ToDateTime(dr["FechaRegistro"]),
+                            Estado = Convert.ToBoolean(dr["Estado"])
+                        });
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally
-            {
-                cmd.Connection.Close();
             }
             return lista;
         }
 
-        public Boolean agregarEnAlmacen(entEnAlmacen ea)
+        public int agregarEnAlmacen(entEnAlmacen ea)
         {
-            SqlCommand cmd = null;
-            Boolean agregar = false;
-            try
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
             {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("spInsertarEnAlmacen", cn);
+                cn.Open();
+                using (SqlCommand cmdMax = new SqlCommand("SELECT ISNULL(MAX(EncargadoalmacenID), 0) + 1 FROM Encargadoalmacen", cn))
+                {
+                    ea.IDEnAlmacen = (int)cmdMax.ExecuteScalar();
+                }
+                using (SqlCommand cmd = new SqlCommand("spInsertarEnAlmacen", cn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@EncargadoalmacenID", ea.IDEnAlmacen);
+                    cmd.Parameters.AddWithValue("@DNI", ea.DNI);
+                    cmd.Parameters.AddWithValue("@Nombre", ea.Nombre);
+                    cmd.Parameters.AddWithValue("@Numero", ea.Numero);
+                    cmd.Parameters.AddWithValue("@FechaRegistro", ea.FechaIngreso);
+                    cmd.Parameters.AddWithValue("@Estado", ea.Estado);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            return ea.IDEnAlmacen;
+        }
+
+        public bool modificarEnAlmacen(entEnAlmacen ea)
+        {
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spEditarEnAlmacen", cn))
+            {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@EncargadoalmacenID", ea.IDEnAlmacen);
                 cmd.Parameters.AddWithValue("@Nombre", ea.Nombre);
                 cmd.Parameters.AddWithValue("@DNI", ea.DNI);
                 cmd.Parameters.AddWithValue("@Numero", ea.Numero);
-                cmd.Parameters.AddWithValue("@FechaRegistro", ea.FechaIngreso);
+                cmd.Parameters.AddWithValue("@FechaIngreso", ea.FechaIngreso);
                 cmd.Parameters.AddWithValue("@Estado", ea.Estado);
                 cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
-                {
-                    agregar = true;
-                }
+                return cmd.ExecuteNonQuery() > 0;
             }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally
-            {
-                if (cmd != null) cmd.Connection.Close();
-            }
-            return agregar;
         }
 
-        public Boolean modificarEnAlmacen(entEnAlmacen ea)
+        public bool inhabilitarEnAlmacen(int idAlmacen)
         {
-            SqlCommand cmd = null;
-            Boolean modificar = false;
-            try
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spDeshabilitarEnAlmacen", cn))
             {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("spEditarEnAlmacen", cn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@EncargadoalmacenID", ea.IDEnAlmacen);
-                cmd.Parameters.AddWithValue("@Nombre", ea.Nombre);
-                cmd.Parameters.AddWithValue("@DNI", ea.DNI);
-                cmd.Parameters.AddWithValue("@Numero", ea.Numero);
-                cmd.Parameters.AddWithValue("@FechaRegistro", ea.FechaIngreso);
-                cmd.Parameters.AddWithValue("@Estado", ea.Estado);
+                cmd.Parameters.AddWithValue("@EncargadoalmacenID", idAlmacen);
                 cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
-                {
-                    modificar = true;
-                }
+                return cmd.ExecuteNonQuery() > 0;
             }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally
-            {
-                if (cmd != null) cmd.Connection.Close();
-            }
-            return modificar;
         }
-        public Boolean inhabilitarEnAlmacen(entEnAlmacen ea)
-        {
-            SqlCommand cmd = null;
-            Boolean inhabilitar = false;
-            try
-            {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("spDeshabilitarEnAlmacen", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@EncargadoalmacenID", ea.IDEnAlmacen);
-                cn.Open();
-                int i = cmd.ExecuteNonQuery();
-                if (i > 0)
-                {
-                    inhabilitar = true;
-                }
-            }
-            catch (Exception e) { throw e; }
-            finally { cmd.Connection.Close(); }
-            return inhabilitar;
-        }
-
-        #endregion Metodos
-
     }
 }

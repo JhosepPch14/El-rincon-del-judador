@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CapaEntidad;
 using CapaLogica;
@@ -14,35 +7,41 @@ namespace MOANSO_PF
 {
     public partial class TipoBebida : Form
     {
+        private int _tipoBebidaID = 0;
+
         public TipoBebida()
         {
             InitializeComponent();
             gbDatosTBebida.Enabled = false;
             listarTBebida();
         }
-        public void listarTBebida() { 
+
+        public void listarTBebida()
+        {
             dgvTipoBebidas.DataSource = logTipoBebida.Instancia.ListarTBebida();
         }
-        public void limpiarVariables() {
-            txtIdTipo.Text = "";
+
+        public void limpiarVariables()
+        {
             txtNombreTBebida.Text = "";
+            chbEstadoTBebida.Checked = true;
+            _tipoBebidaID = 0;
         }
+
         private void btnAgregarTBebida_Click(object sender, EventArgs e)
         {
-            try
+            entTipoBebida tb = new entTipoBebida
             {
-                entTipoBebida tb = new entTipoBebida
-                {
-                    IdTipoBebida = int.Parse(txtIdTipo.Text.Trim()),
-                    NombreTipo = txtNombreTBebida.Text.Trim(),
-                    Estado = chbEstadoTBebida.Checked
-                };
-                logTipoBebida.Instancia.InsertarTBebida(tb);
-            }
-            catch (Exception exc)
-            {
-                MessageBox.Show("Error..." + exc);
-            }
+                NombreTipo = txtNombreTBebida.Text.Trim(),
+                Estado = chbEstadoTBebida.Checked
+            };
+
+            var result = logTipoBebida.Instancia.InsertarTBebida(tb);
+            if (result.Success)
+                MessageBox.Show("Tipo de bebida registrado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             gbDatosTBebida.Enabled = false;
             listarTBebida();
@@ -50,20 +49,25 @@ namespace MOANSO_PF
 
         private void btnModificarTBebida_Click(object sender, EventArgs e)
         {
-            try
+            if (_tipoBebidaID == 0)
             {
-                entTipoBebida tb = new entTipoBebida
-                {
-                    IdTipoBebida = int.Parse(txtIdTipo.Text.Trim()),
-                    NombreTipo = txtNombreTBebida.Text.Trim(),
-                    Estado = chbEstadoTBebida.Checked
-                };
-                logTipoBebida.Instancia.ModificarTBebida(tb);
+                MessageBox.Show("Seleccione un tipo de bebida de la lista.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception exc)
+
+            entTipoBebida tb = new entTipoBebida
             {
-                MessageBox.Show("Error..." + exc);
-            }
+                IdTipoBebida = _tipoBebidaID,
+                NombreTipo = txtNombreTBebida.Text.Trim(),
+                Estado = chbEstadoTBebida.Checked
+            };
+
+            var result = logTipoBebida.Instancia.ModificarTBebida(tb);
+            if (result.Success)
+                MessageBox.Show("Tipo de bebida modificado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             gbDatosTBebida.Enabled = false;
             listarTBebida();
@@ -71,19 +75,18 @@ namespace MOANSO_PF
 
         private void btnInhabilitarTBebida_Click(object sender, EventArgs e)
         {
-            try
+            if (_tipoBebidaID == 0)
             {
-                entTipoBebida tb = new entTipoBebida
-                {
-                    IdTipoBebida = int.Parse(txtIdTipo.Text.Trim()),
-                };
-                chbEstadoTBebida.Checked = false;
-                logTipoBebida.Instancia.InhabilitarTBebida(tb);
+                MessageBox.Show("Seleccione un tipo de bebida de la lista.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception exc)
-            {
-                MessageBox.Show("Error..." + exc);
-            }
+
+            var result = logTipoBebida.Instancia.InhabilitarTBebida(_tipoBebidaID);
+            if (result.Success)
+                MessageBox.Show("Tipo de bebida inhabilitado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             gbDatosTBebida.Enabled = false;
             listarTBebida();
@@ -91,13 +94,14 @@ namespace MOANSO_PF
 
         private void dgvTipoBebidas_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            DataGridViewRow fila = dgvTipoBebidas.Rows[e.RowIndex];
-            txtIdTipo.Text = fila.Cells[0].Value.ToString();
-            txtNombreTBebida.Text = fila.Cells[1].Value.ToString();
-            chbEstadoTBebida.Checked = Convert.ToBoolean(fila.Cells[2].Value);
+            if (e.RowIndex < 0) return;
+            DataGridViewRow filaActual = dgvTipoBebidas.Rows[e.RowIndex];
+            _tipoBebidaID = Convert.ToInt32(filaActual.Cells[0].Value);
+            txtNombreTBebida.Text = filaActual.Cells[1].Value.ToString();
+            chbEstadoTBebida.Checked = Convert.ToBoolean(filaActual.Cells[2].Value);
         }
 
-        private void btnNuevoTipo_Click(object sender, EventArgs e)
+        private void btnNuevoTBebida_Click(object sender, EventArgs e)
         {
             gbDatosTBebida.Enabled = true;
             btnAgregarTBebida.Enabled = true;
@@ -105,11 +109,16 @@ namespace MOANSO_PF
             btnModificarTBebida.Enabled = false;
         }
 
-        private void btnDatosTipo_Click(object sender, EventArgs e)
+        private void btnDatosTBebida_Click(object sender, EventArgs e)
         {
             gbDatosTBebida.Enabled = true;
             btnModificarTBebida.Enabled = true;
             btnAgregarTBebida.Enabled = false;
+        }
+
+        private void btnRegresar_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

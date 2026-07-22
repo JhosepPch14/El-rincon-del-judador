@@ -1,138 +1,88 @@
-﻿using CapaEntidad;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CapaEntidad;
 
 namespace CapaDatos
 {
-    public class datInsumos
+    public class datInsumos : IdatInsumos
     {
-        #region sigleton
-        private static readonly datInsumos _instancia = new datInsumos();
-        public static datInsumos Instancia
-        {
-            get
-            {
-                return datInsumos._instancia;
-            }
-        }
-        #endregion singleton
-        // 1. Listar insumos
+        private static readonly datInsumos _instance = new datInsumos();
+        public static datInsumos Instancia { get { return _instance; } }
+
         public List<entInsumos> ListarInsumos()
         {
-            SqlCommand cmd = null;
-            List<entInsumos> lista = new List<entInsumos>();
-            try
+            List<entInsumos> list = new List<entInsumos>();
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spListarInsumos", cn))
             {
-                SqlConnection cn = Conexion.Instancia.Conectar(); //singleton
-                cmd = new SqlCommand("spListarInsumos", cn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cn.Open();
-                SqlDataReader dr = cmd.ExecuteReader();
-                while (dr.Read())
+                using (SqlDataReader dr = cmd.ExecuteReader())
                 {
-                    entInsumos i = new entInsumos();
-                    i.IdInsumo = Convert.ToInt32(dr["InsumosID"]);
-                    i.NombreInsumo = dr["Nombre"].ToString();
-                    i.Cantidad = dr["Cantidad"].ToString();
-                    i.EstadoInsumos = Convert.ToBoolean(dr["Estado"]);
-                    lista.Add(i);
+                    while (dr.Read())
+                    {
+                        list.Add(new entInsumos
+                        {
+                            IdInsumo = Convert.ToInt32(dr["InsumosID"]),
+                            NombreInsumo = dr["Nombre"].ToString(),
+                            Cantidad = Convert.ToDecimal(dr["Cantidad"]),
+                            EstadoInsumos = Convert.ToBoolean(dr["Estado"])
+                        });
+                    }
                 }
             }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            return lista;
+            return list;
         }
 
-        // 2. Insertar insumo
-        public bool InsertarInsumo(entInsumos insumo)
+        public int InsertarInsumo(entInsumos ins)
         {
-            SqlCommand cmd = null;
-            bool rpta = false;
-            try
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
             {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("sp_InsertarInsumo", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@InsumosID", insumo.IdInsumo);
-                cmd.Parameters.AddWithValue("@Nombre", insumo.NombreInsumo);
-                cmd.Parameters.AddWithValue("@Cantidad", insumo.Cantidad);
-                cmd.Parameters.AddWithValue("@Estado", insumo.EstadoInsumos);
                 cn.Open();
-                cmd.ExecuteNonQuery();
-                rpta = true;
+                using (SqlCommand cmdMax = new SqlCommand("SELECT ISNULL(MAX(InsumosID), 0) + 1 FROM Insumos", cn))
+                {
+                    ins.IdInsumo = (int)cmdMax.ExecuteScalar();
+                }
+                using (SqlCommand cmd = new SqlCommand("spInsertarInsumo", cn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@InsumosID", ins.IdInsumo);
+                    cmd.Parameters.AddWithValue("@Nombre", ins.NombreInsumo);
+                    cmd.Parameters.AddWithValue("@Cantidad", ins.Cantidad);
+                    cmd.Parameters.AddWithValue("@Estado", ins.EstadoInsumos);
+                    cmd.ExecuteNonQuery();
+                }
             }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                if (cmd != null) cmd.Connection.Close();
-            }
-            return rpta;
+            return ins.IdInsumo;
         }
 
-        // 3. Modificar insumo
-        public bool ModificarInsumo(entInsumos insumo)
+        public bool ModificarInsumo(entInsumos ins)
         {
-            SqlCommand cmd = null;
-            bool rpta = false;
-            try
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spModificarInsumo", cn))
             {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("sp_ModificarInsumo", cn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@InsumosID", insumo.IdInsumo);
-                cmd.Parameters.AddWithValue("@Nombre", insumo.NombreInsumo);
-                cmd.Parameters.AddWithValue("@Cantidad", insumo.Cantidad);
-                cmd.Parameters.AddWithValue("@Estado", insumo.EstadoInsumos);
+                cmd.Parameters.AddWithValue("@InsumosID", ins.IdInsumo);
+                cmd.Parameters.AddWithValue("@Nombre", ins.NombreInsumo);
+                cmd.Parameters.AddWithValue("@Cantidad", ins.Cantidad);
+                cmd.Parameters.AddWithValue("@Estado", ins.EstadoInsumos);
                 cn.Open();
-                cmd.ExecuteNonQuery();
-                rpta = true;
+                return cmd.ExecuteNonQuery() > 0;
             }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                if (cmd != null) cmd.Connection.Close();
-            }
-            return rpta;
         }
 
-        // 4. Inhabilitar insumo (Estado = 0)
-        public bool InhabilitarInsumo(entInsumos insumo)
+        public bool InhabilitarInsumo(int insumoID)
         {
-            SqlCommand cmd = null;
-            bool rpta = false;
-            try
+            using (SqlConnection cn = Conexion.Instancia.Conectar())
+            using (SqlCommand cmd = new SqlCommand("spInhabilitarInsumo", cn))
             {
-                SqlConnection cn = Conexion.Instancia.Conectar();
-                cmd = new SqlCommand("sp_InhabilitarInsumo", cn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("InsumosID", insumo.IdInsumo);
+                cmd.Parameters.AddWithValue("@InsumosID", insumoID);
                 cn.Open();
-                cmd.ExecuteNonQuery();
-                rpta = true;
+                return cmd.ExecuteNonQuery() > 0;
             }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                if (cmd != null) cmd.Connection.Close();
-            }
-            return rpta;
         }
-
     }
 }

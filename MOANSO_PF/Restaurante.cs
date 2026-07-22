@@ -28,5 +28,20 @@ namespace MOANSO_PF
             Mantenedores formMantenedores = new Mantenedores();
             formMantenedores.Show();
         }
+
+        private void Restaurante_Load(object sender, EventArgs e)
+        {
+            int cX = this.ClientSize.Width / 2;
+            int cY = this.ClientSize.Height / 2;
+
+            label1.Left = cX - label1.Width / 2;
+            label2.Left = cX - label2.Width / 2;
+
+            int btnsW = btnCore.Width + 30 + btnMantenedor.Width;
+            btnCore.Left = cX - btnsW / 2;
+            btnMantenedor.Left = btnCore.Right + 30;
+            btnCore.Top = cY - btnCore.Height / 2;
+            btnMantenedor.Top = btnCore.Top;
+        }
     }
 }

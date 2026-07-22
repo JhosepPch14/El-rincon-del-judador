@@ -52,50 +52,52 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(17, 46);
+            this.label2.Location = new System.Drawing.Point(14, 123);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(58, 13);
+            this.label2.Size = new System.Drawing.Size(79, 20);
             this.label2.TabIndex = 1;
             this.label2.Text = "ID Insumo:";
+            this.label2.Visible = false;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(17, 94);
+            this.label3.Location = new System.Drawing.Point(20, 52);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(101, 13);
+            this.label3.Size = new System.Drawing.Size(144, 20);
             this.label3.TabIndex = 2;
             this.label3.Text = "Nombre del Insumo:";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(17, 150);
+            this.label4.Location = new System.Drawing.Point(17, 161);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(55, 13);
+            this.label4.Size = new System.Drawing.Size(76, 20);
             this.label4.TabIndex = 3;
             this.label4.Text = "Cantidad :";
             // 
             // txtIDInsumo
             // 
-            this.txtIDInsumo.Location = new System.Drawing.Point(82, 38);
+            this.txtIDInsumo.Location = new System.Drawing.Point(114, 116);
             this.txtIDInsumo.Name = "txtIDInsumo";
-            this.txtIDInsumo.Size = new System.Drawing.Size(100, 20);
+            this.txtIDInsumo.Size = new System.Drawing.Size(104, 27);
             this.txtIDInsumo.TabIndex = 4;
+            this.txtIDInsumo.Visible = false;
             // 
             // txtNombreInsumo
             // 
-            this.txtNombreInsumo.Location = new System.Drawing.Point(125, 86);
+            this.txtNombreInsumo.Location = new System.Drawing.Point(18, 75);
             this.txtNombreInsumo.Name = "txtNombreInsumo";
-            this.txtNombreInsumo.Size = new System.Drawing.Size(100, 20);
+            this.txtNombreInsumo.Size = new System.Drawing.Size(200, 27);
             this.txtNombreInsumo.TabIndex = 5;
             // 
             // chbEstadoInsumo
             // 
             this.chbEstadoInsumo.AutoSize = true;
-            this.chbEstadoInsumo.Location = new System.Drawing.Point(101, 196);
+            this.chbEstadoInsumo.Location = new System.Drawing.Point(10, 198);
             this.chbEstadoInsumo.Name = "chbEstadoInsumo";
-            this.chbEstadoInsumo.Size = new System.Drawing.Size(59, 17);
+            this.chbEstadoInsumo.Size = new System.Drawing.Size(76, 24);
             this.chbEstadoInsumo.TabIndex = 7;
             this.chbEstadoInsumo.Text = "Estado";
             this.chbEstadoInsumo.UseVisualStyleBackColor = true;
@@ -104,7 +106,7 @@
             // 
             this.btnRegresar.Location = new System.Drawing.Point(49, 406);
             this.btnRegresar.Name = "btnRegresar";
-            this.btnRegresar.Size = new System.Drawing.Size(75, 23);
+            this.btnRegresar.Size = new System.Drawing.Size(85, 32);
             this.btnRegresar.TabIndex = 8;
             this.btnRegresar.Text = "Regresar";
             this.btnRegresar.UseVisualStyleBackColor = true;
@@ -114,7 +116,7 @@
             // 
             this.btnCancelar.Location = new System.Drawing.Point(530, 406);
             this.btnCancelar.Name = "btnCancelar";
-            this.btnCancelar.Size = new System.Drawing.Size(75, 23);
+            this.btnCancelar.Size = new System.Drawing.Size(82, 32);
             this.btnCancelar.TabIndex = 9;
             this.btnCancelar.Text = "Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = true;
@@ -124,7 +126,7 @@
             // 
             this.btnConfirmar.Location = new System.Drawing.Point(683, 406);
             this.btnConfirmar.Name = "btnConfirmar";
-            this.btnConfirmar.Size = new System.Drawing.Size(75, 23);
+            this.btnConfirmar.Size = new System.Drawing.Size(80, 32);
             this.btnConfirmar.TabIndex = 10;
             this.btnConfirmar.Text = "Confirmar";
             this.btnConfirmar.UseVisualStyleBackColor = true;
@@ -134,7 +136,7 @@
             // 
             this.btnAgregarInsumo.Location = new System.Drawing.Point(59, 292);
             this.btnAgregarInsumo.Name = "btnAgregarInsumo";
-            this.btnAgregarInsumo.Size = new System.Drawing.Size(75, 23);
+            this.btnAgregarInsumo.Size = new System.Drawing.Size(75, 33);
             this.btnAgregarInsumo.TabIndex = 11;
             this.btnAgregarInsumo.Text = "Agregar";
             this.btnAgregarInsumo.UseVisualStyleBackColor = true;
@@ -144,7 +146,7 @@
             // 
             this.btnModificarInsumo.Location = new System.Drawing.Point(199, 292);
             this.btnModificarInsumo.Name = "btnModificarInsumo";
-            this.btnModificarInsumo.Size = new System.Drawing.Size(75, 23);
+            this.btnModificarInsumo.Size = new System.Drawing.Size(80, 33);
             this.btnModificarInsumo.TabIndex = 12;
             this.btnModificarInsumo.Text = "Modificar";
             this.btnModificarInsumo.UseVisualStyleBackColor = true;
@@ -154,7 +156,7 @@
             // 
             this.btnInhabilitarInsumo.Location = new System.Drawing.Point(128, 343);
             this.btnInhabilitarInsumo.Name = "btnInhabilitarInsumo";
-            this.btnInhabilitarInsumo.Size = new System.Drawing.Size(75, 23);
+            this.btnInhabilitarInsumo.Size = new System.Drawing.Size(85, 31);
             this.btnInhabilitarInsumo.TabIndex = 13;
             this.btnInhabilitarInsumo.Text = "Inhabilitar";
             this.btnInhabilitarInsumo.UseVisualStyleBackColor = true;
@@ -165,15 +167,16 @@
             this.dgvInsumos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvInsumos.Location = new System.Drawing.Point(299, 41);
             this.dgvInsumos.Name = "dgvInsumos";
+            this.dgvInsumos.RowHeadersWidth = 51;
             this.dgvInsumos.Size = new System.Drawing.Size(464, 251);
             this.dgvInsumos.TabIndex = 14;
             this.dgvInsumos.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvInsumos_CellContentClick);
             // 
             // txtCantidadInsumo
             // 
-            this.txtCantidadInsumo.Location = new System.Drawing.Point(78, 147);
+            this.txtCantidadInsumo.Location = new System.Drawing.Point(114, 154);
             this.txtCantidadInsumo.Name = "txtCantidadInsumo";
-            this.txtCantidadInsumo.Size = new System.Drawing.Size(104, 20);
+            this.txtCantidadInsumo.Size = new System.Drawing.Size(104, 27);
             this.txtCantidadInsumo.TabIndex = 15;
             // 
             // gbDatosInsumo
@@ -196,7 +199,7 @@
             // 
             this.btnNuevo.Location = new System.Drawing.Point(360, 298);
             this.btnNuevo.Name = "btnNuevo";
-            this.btnNuevo.Size = new System.Drawing.Size(75, 23);
+            this.btnNuevo.Size = new System.Drawing.Size(82, 27);
             this.btnNuevo.TabIndex = 25;
             this.btnNuevo.Text = "Nuevo";
             this.btnNuevo.UseVisualStyleBackColor = true;
@@ -206,7 +209,7 @@
             // 
             this.btnDatos.Location = new System.Drawing.Point(508, 298);
             this.btnDatos.Name = "btnDatos";
-            this.btnDatos.Size = new System.Drawing.Size(75, 23);
+            this.btnDatos.Size = new System.Drawing.Size(77, 27);
             this.btnDatos.TabIndex = 24;
             this.btnDatos.Text = "Editar Datos";
             this.btnDatos.UseVisualStyleBackColor = true;
@@ -214,8 +217,9 @@
             // 
             // MantenedorInsumos
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(237)))), ((int)(((byte)(214)))));
             this.ClientSize = new System.Drawing.Size(813, 450);
             this.Controls.Add(this.btnNuevo);
             this.Controls.Add(this.btnDatos);
@@ -227,8 +231,10 @@
             this.Controls.Add(this.btnConfirmar);
             this.Controls.Add(this.btnCancelar);
             this.Controls.Add(this.btnRegresar);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.Name = "MantenedorInsumos";
-            this.Text = "MantenedorInsumos";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Insumos";
             ((System.ComponentModel.ISupportInitialize)(this.dgvInsumos)).EndInit();
             this.gbDatosInsumo.ResumeLayout(false);
             this.gbDatosInsumo.PerformLayout();

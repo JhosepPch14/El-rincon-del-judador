@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CapaEntidad;
 using CapaLogica;
@@ -14,23 +7,29 @@ namespace MOANSO_PF
 {
     public partial class CompraInsumos : Form
     {
+        private int _compraID = 0;
+
         public CompraInsumos()
         {
             InitializeComponent();
             listarCompraReq();
             llenarDatosCB();
         }
+
         public void listarCompraReq()
         {
             dgvCompraReq.DataSource = logCompraReq.Instancia.ListarCompraReq();
         }
+
         public void limpiarVariables()
         {
-            txtIDCompra.Text = "";
             txtEncargado.Text = "";
             txtMetodoPago.Text = "";
-            txtMontoTotal.Text = ""; 
+            txtMontoTotal.Text = "";
+            chbEstadoCompra.Checked = true;
+            _compraID = 0;
         }
+
         public void llenarDatosCB()
         {
             cbIDReq.DataSource = logReqInsumos.Instancia.ListarReqInsumos();
@@ -39,56 +38,80 @@ namespace MOANSO_PF
 
             cbIDProveedor.DataSource = logProveedor.Instancia.ListarProveedor();
             cbIDProveedor.DisplayMember = "NombreProveedor";
-            cbIDProveedor.ValueMember = "IDProveedor";
+            cbIDProveedor.ValueMember = "IdProveedor";
         }
+
         private void btnRegistrarCompra_Click(object sender, EventArgs e)
         {
-            try
+            if (!decimal.TryParse(txtMontoTotal.Text.Trim(), out decimal monto))
             {
-                entCompraReq cr = new entCompraReq();
-                cr.IdCompra = int.Parse(txtIDCompra.Text.Trim());
-                cr.IDRequerimiento = Convert.ToInt32(cbIDReq.SelectedValue);
-                cr.IDProveedor = Convert.ToInt32(cbIDProveedor.SelectedValue);
-                cr.Encargado = txtEncargado.Text.Trim();
-                cr.FechaCompra = dtpFechaCompra.Value;
-                cr.MetodoPago = txtMetodoPago.Text.Trim();
-                cr.MontoTotal = Convert.ToDecimal(txtMontoTotal.Text.Trim());
-                cr.EstadoCompra = chbEstadoCompra.Checked;
-                logCompraReq.Instancia.registrarCompraReq(cr);
+                MessageBox.Show("Monto Total debe ser un valor numérico válido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception exc)
+
+            entCompraReq cr = new entCompraReq
             {
-                MessageBox.Show("Error..." + exc);
-            }
+                IDRequerimiento = Convert.ToInt32(cbIDReq.SelectedValue),
+                IDProveedor = Convert.ToInt32(cbIDProveedor.SelectedValue),
+                Encargado = txtEncargado.Text.Trim(),
+                FechaCompra = dtpFechaCompra.Value,
+                MetodoPago = txtMetodoPago.Text.Trim(),
+                MontoTotal = monto,
+                EstadoCompra = chbEstadoCompra.Checked
+            };
+
+            var result = logCompraReq.Instancia.registrarCompraReq(cr);
+            if (result.Success)
+                MessageBox.Show("Compra registrada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             listarCompraReq();
         }
 
         private void btnAnularReq_Click(object sender, EventArgs e)
         {
-            try
+            if (_compraID == 0)
             {
-                entCompraReq cr = new entCompraReq();
-                cr.IdCompra = int.Parse(txtIDCompra.Text.Trim());
-                chbEstadoCompra.Checked = false;
-                logCompraReq.Instancia.anularCompraReq(cr);
+                MessageBox.Show("Seleccione una compra de la lista.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception exc)
-            {
-                MessageBox.Show("Error..." + exc);
-            }
+
+            var result = logCompraReq.Instancia.anularCompraReq(_compraID);
+            if (result.Success)
+                MessageBox.Show("Compra anulada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             limpiarVariables();
             listarCompraReq();
         }
 
         private void dgvCompraReq_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0) return;
             DataGridViewRow filaActual = dgvCompraReq.Rows[e.RowIndex];
-            txtIDCompra.Text = filaActual.Cells["IdCompra"].Value.ToString();
+            _compraID = Convert.ToInt32(filaActual.Cells["ComprainsumosID"].Value);
             txtEncargado.Text = filaActual.Cells["Encargado"].Value.ToString();
-            txtMetodoPago.Text = filaActual.Cells["IdCompra"].Value.ToString();
+            txtMetodoPago.Text = filaActual.Cells["MetodoPago"].Value.ToString();
             txtMontoTotal.Text = filaActual.Cells["MontoTotal"].Value.ToString();
             chbEstadoCompra.Checked = Convert.ToBoolean(filaActual.Cells["EstadoCompra"].Value);
+        }
+
+        private void btnConfirmar_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void btnRegresar_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void btnCancelar_Click(object sender, EventArgs e)
+        {
+            gbDatosCompra.Enabled = false;
         }
     }
 }

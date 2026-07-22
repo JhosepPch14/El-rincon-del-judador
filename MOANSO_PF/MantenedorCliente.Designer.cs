@@ -58,62 +58,63 @@
             // lblIdCliente
             // 
             this.lblIdCliente.AutoSize = true;
-            this.lblIdCliente.Location = new System.Drawing.Point(46, 33);
+            this.lblIdCliente.Location = new System.Drawing.Point(20, 47);
             this.lblIdCliente.Name = "lblIdCliente";
-            this.lblIdCliente.Size = new System.Drawing.Size(56, 13);
+            this.lblIdCliente.Size = new System.Drawing.Size(77, 20);
             this.lblIdCliente.TabIndex = 1;
             this.lblIdCliente.Text = "ID Cliente:";
+            this.lblIdCliente.Visible = false;
             // 
             // lblDNICliente
             // 
             this.lblDNICliente.AutoSize = true;
-            this.lblDNICliente.Location = new System.Drawing.Point(47, 73);
+            this.lblDNICliente.Location = new System.Drawing.Point(20, 80);
             this.lblDNICliente.Name = "lblDNICliente";
-            this.lblDNICliente.Size = new System.Drawing.Size(29, 13);
+            this.lblDNICliente.Size = new System.Drawing.Size(38, 20);
             this.lblDNICliente.TabIndex = 2;
             this.lblDNICliente.Text = "DNI:";
             // 
             // lblNombre
             // 
             this.lblNombre.AutoSize = true;
-            this.lblNombre.Location = new System.Drawing.Point(46, 115);
+            this.lblNombre.Location = new System.Drawing.Point(20, 116);
             this.lblNombre.Name = "lblNombre";
-            this.lblNombre.Size = new System.Drawing.Size(47, 13);
+            this.lblNombre.Size = new System.Drawing.Size(67, 20);
             this.lblNombre.TabIndex = 3;
             this.lblNombre.Text = "Nombre:";
             // 
             // lblNumero
             // 
             this.lblNumero.AutoSize = true;
-            this.lblNumero.Location = new System.Drawing.Point(46, 154);
+            this.lblNumero.Location = new System.Drawing.Point(20, 151);
             this.lblNumero.Name = "lblNumero";
-            this.lblNumero.Size = new System.Drawing.Size(47, 13);
+            this.lblNumero.Size = new System.Drawing.Size(66, 20);
             this.lblNumero.TabIndex = 4;
             this.lblNumero.Text = "Numero:";
             // 
             // lblCorreo
             // 
             this.lblCorreo.AutoSize = true;
-            this.lblCorreo.Location = new System.Drawing.Point(46, 192);
+            this.lblCorreo.Location = new System.Drawing.Point(20, 186);
             this.lblCorreo.Name = "lblCorreo";
-            this.lblCorreo.Size = new System.Drawing.Size(41, 13);
+            this.lblCorreo.Size = new System.Drawing.Size(57, 20);
             this.lblCorreo.TabIndex = 5;
             this.lblCorreo.Text = "Correo:";
             // 
             // lblFecha
             // 
             this.lblFecha.AutoSize = true;
-            this.lblFecha.Location = new System.Drawing.Point(48, 226);
+            this.lblFecha.Location = new System.Drawing.Point(20, 221);
             this.lblFecha.Name = "lblFecha";
-            this.lblFecha.Size = new System.Drawing.Size(40, 13);
+            this.lblFecha.Size = new System.Drawing.Size(50, 20);
             this.lblFecha.TabIndex = 6;
             this.lblFecha.Text = "Fecha:";
             // 
             // btnRegresar
             // 
-            this.btnRegresar.Location = new System.Drawing.Point(28, 427);
+            this.btnRegresar.Location = new System.Drawing.Point(20, 430);
             this.btnRegresar.Name = "btnRegresar";
-            this.btnRegresar.Size = new System.Drawing.Size(75, 23);
+            this.btnRegresar.Size = new System.Drawing.Size(75, 38);
             this.btnRegresar.TabIndex = 7;
             this.btnRegresar.Text = "Regresar";
             this.btnRegresar.UseVisualStyleBackColor = true;
@@ -121,9 +122,9 @@
             // 
             // btnCancelar
             // 
-            this.btnCancelar.Location = new System.Drawing.Point(772, 427);
+            this.btnCancelar.Location = new System.Drawing.Point(390, 430);
             this.btnCancelar.Name = "btnCancelar";
-            this.btnCancelar.Size = new System.Drawing.Size(75, 23);
+            this.btnCancelar.Size = new System.Drawing.Size(75, 38);
             this.btnCancelar.TabIndex = 8;
             this.btnCancelar.Text = "Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = true;
@@ -131,9 +132,9 @@
             // 
             // btnConfirmar
             // 
-            this.btnConfirmar.Location = new System.Drawing.Point(1039, 427);
+            this.btnConfirmar.Location = new System.Drawing.Point(740, 430);
             this.btnConfirmar.Name = "btnConfirmar";
-            this.btnConfirmar.Size = new System.Drawing.Size(75, 23);
+            this.btnConfirmar.Size = new System.Drawing.Size(90, 38);
             this.btnConfirmar.TabIndex = 9;
             this.btnConfirmar.Text = "Confirmar";
             this.btnConfirmar.UseVisualStyleBackColor = true;
@@ -141,9 +142,9 @@
             // 
             // btnAgregarCliente
             // 
-            this.btnAgregarCliente.Location = new System.Drawing.Point(65, 336);
+            this.btnAgregarCliente.Location = new System.Drawing.Point(56, 336);
             this.btnAgregarCliente.Name = "btnAgregarCliente";
-            this.btnAgregarCliente.Size = new System.Drawing.Size(75, 23);
+            this.btnAgregarCliente.Size = new System.Drawing.Size(74, 40);
             this.btnAgregarCliente.TabIndex = 10;
             this.btnAgregarCliente.Text = "Agregar";
             this.btnAgregarCliente.UseVisualStyleBackColor = true;
@@ -151,9 +152,9 @@
             // 
             // btnModificarCliente
             // 
-            this.btnModificarCliente.Location = new System.Drawing.Point(147, 382);
+            this.btnModificarCliente.Location = new System.Drawing.Point(129, 382);
             this.btnModificarCliente.Name = "btnModificarCliente";
-            this.btnModificarCliente.Size = new System.Drawing.Size(75, 23);
+            this.btnModificarCliente.Size = new System.Drawing.Size(97, 40);
             this.btnModificarCliente.TabIndex = 11;
             this.btnModificarCliente.Text = "Modificar";
             this.btnModificarCliente.UseVisualStyleBackColor = true;
@@ -163,7 +164,7 @@
             // 
             this.btnInhabilitarCliente.Location = new System.Drawing.Point(209, 336);
             this.btnInhabilitarCliente.Name = "btnInhabilitarCliente";
-            this.btnInhabilitarCliente.Size = new System.Drawing.Size(75, 23);
+            this.btnInhabilitarCliente.Size = new System.Drawing.Size(87, 40);
             this.btnInhabilitarCliente.TabIndex = 12;
             this.btnInhabilitarCliente.Text = "Inhabilitar";
             this.btnInhabilitarCliente.UseVisualStyleBackColor = true;
@@ -175,58 +176,60 @@
             this.dgvCliente.Location = new System.Drawing.Point(350, 36);
             this.dgvCliente.Name = "dgvCliente";
             this.dgvCliente.ReadOnly = true;
-            this.dgvCliente.Size = new System.Drawing.Size(750, 296);
+            this.dgvCliente.RowHeadersWidth = 51;
+            this.dgvCliente.Size = new System.Drawing.Size(480, 296);
             this.dgvCliente.TabIndex = 13;
             this.dgvCliente.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCliente_CellContentClick);
             // 
             // txtIDCliente
             // 
-            this.txtIDCliente.Location = new System.Drawing.Point(106, 26);
+            this.txtIDCliente.Location = new System.Drawing.Point(113, 47);
             this.txtIDCliente.Name = "txtIDCliente";
-            this.txtIDCliente.Size = new System.Drawing.Size(100, 20);
+            this.txtIDCliente.Size = new System.Drawing.Size(100, 27);
             this.txtIDCliente.TabIndex = 14;
+            this.txtIDCliente.Visible = false;
             // 
             // txtDNICliente
             // 
-            this.txtDNICliente.Location = new System.Drawing.Point(83, 65);
+            this.txtDNICliente.Location = new System.Drawing.Point(113, 80);
             this.txtDNICliente.Name = "txtDNICliente";
-            this.txtDNICliente.Size = new System.Drawing.Size(100, 20);
+            this.txtDNICliente.Size = new System.Drawing.Size(100, 27);
             this.txtDNICliente.TabIndex = 15;
             // 
             // txtNombreCliente
             // 
-            this.txtNombreCliente.Location = new System.Drawing.Point(100, 107);
+            this.txtNombreCliente.Location = new System.Drawing.Point(113, 113);
             this.txtNombreCliente.Name = "txtNombreCliente";
-            this.txtNombreCliente.Size = new System.Drawing.Size(100, 20);
+            this.txtNombreCliente.Size = new System.Drawing.Size(100, 27);
             this.txtNombreCliente.TabIndex = 16;
             // 
             // txtNumeroCliente
             // 
-            this.txtNumeroCliente.Location = new System.Drawing.Point(99, 147);
+            this.txtNumeroCliente.Location = new System.Drawing.Point(113, 146);
             this.txtNumeroCliente.Name = "txtNumeroCliente";
-            this.txtNumeroCliente.Size = new System.Drawing.Size(100, 20);
+            this.txtNumeroCliente.Size = new System.Drawing.Size(100, 27);
             this.txtNumeroCliente.TabIndex = 17;
             // 
             // txtCorreoCliente
             // 
-            this.txtCorreoCliente.Location = new System.Drawing.Point(94, 184);
+            this.txtCorreoCliente.Location = new System.Drawing.Point(113, 183);
             this.txtCorreoCliente.Name = "txtCorreoCliente";
-            this.txtCorreoCliente.Size = new System.Drawing.Size(100, 20);
+            this.txtCorreoCliente.Size = new System.Drawing.Size(100, 27);
             this.txtCorreoCliente.TabIndex = 18;
             // 
             // dtpFechaCliente
             // 
-            this.dtpFechaCliente.Location = new System.Drawing.Point(94, 220);
+            this.dtpFechaCliente.Location = new System.Drawing.Point(110, 218);
             this.dtpFechaCliente.Name = "dtpFechaCliente";
-            this.dtpFechaCliente.Size = new System.Drawing.Size(200, 20);
+            this.dtpFechaCliente.Size = new System.Drawing.Size(200, 27);
             this.dtpFechaCliente.TabIndex = 19;
             // 
             // chbEstadoCliente
             // 
             this.chbEstadoCliente.AutoSize = true;
-            this.chbEstadoCliente.Location = new System.Drawing.Point(135, 260);
+            this.chbEstadoCliente.Location = new System.Drawing.Point(24, 261);
             this.chbEstadoCliente.Name = "chbEstadoCliente";
-            this.chbEstadoCliente.Size = new System.Drawing.Size(59, 17);
+            this.chbEstadoCliente.Size = new System.Drawing.Size(76, 24);
             this.chbEstadoCliente.TabIndex = 20;
             this.chbEstadoCliente.Text = "Estado";
             this.chbEstadoCliente.UseVisualStyleBackColor = true;
@@ -255,9 +258,9 @@
             // 
             // btnDatosCliente
             // 
-            this.btnDatosCliente.Location = new System.Drawing.Point(507, 381);
+            this.btnDatosCliente.Location = new System.Drawing.Point(513, 355);
             this.btnDatosCliente.Name = "btnDatosCliente";
-            this.btnDatosCliente.Size = new System.Drawing.Size(75, 23);
+            this.btnDatosCliente.Size = new System.Drawing.Size(75, 29);
             this.btnDatosCliente.TabIndex = 22;
             this.btnDatosCliente.Text = "Editar Datos";
             this.btnDatosCliente.UseVisualStyleBackColor = true;
@@ -265,9 +268,9 @@
             // 
             // btnNuevoCliente
             // 
-            this.btnNuevoCliente.Location = new System.Drawing.Point(359, 381);
+            this.btnNuevoCliente.Location = new System.Drawing.Point(366, 355);
             this.btnNuevoCliente.Name = "btnNuevoCliente";
-            this.btnNuevoCliente.Size = new System.Drawing.Size(75, 23);
+            this.btnNuevoCliente.Size = new System.Drawing.Size(75, 29);
             this.btnNuevoCliente.TabIndex = 23;
             this.btnNuevoCliente.Text = "Nuevo";
             this.btnNuevoCliente.UseVisualStyleBackColor = true;
@@ -275,9 +278,10 @@
             // 
             // MantenedorCliente
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1152, 472);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(237)))), ((int)(((byte)(214)))));
+            this.ClientSize = new System.Drawing.Size(850, 480);
             this.Controls.Add(this.btnNuevoCliente);
             this.Controls.Add(this.btnDatosCliente);
             this.Controls.Add(this.gbDatosCliente);
@@ -288,8 +292,10 @@
             this.Controls.Add(this.btnConfirmar);
             this.Controls.Add(this.btnCancelar);
             this.Controls.Add(this.btnRegresar);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.Name = "MantenedorCliente";
-            this.Text = "MantenedorCliente";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Clientes";
             ((System.ComponentModel.ISupportInitialize)(this.dgvCliente)).EndInit();
             this.gbDatosCliente.ResumeLayout(false);
             this.gbDatosCliente.PerformLayout();
