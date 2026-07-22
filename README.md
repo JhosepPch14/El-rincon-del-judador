@@ -44,10 +44,6 @@ CapaPresentación → Interfaz WinForms
 4. Abrir `MOANSO_PF.sln` y compilar (Rebuild)
 5. Ejecutar
 
-## Capturas
-
-*(Agrega aquí capturas del menú principal y ventanas CRUD)*
-
 ## Estado
 
 Proyecto funcional para entorno local/monousuario.
